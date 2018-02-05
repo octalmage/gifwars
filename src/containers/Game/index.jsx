@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col, Button} from 'react-bootstrap';
 import GifComponent from '../../components/GifComponent';
-import ClientLayout from '../../layouts/Game/ClientLayout'
-import ServerLayout from '../../layouts/Game/ServerLayout'
 import { withRouter } from 'react-router'
 
 class Game extends React.Component {
@@ -11,33 +9,60 @@ class Game extends React.Component {
     this.state = {};
 
     //test data
-    let users = [
+    this.state.users = [
       {
         id: 'user1',
-        gif: 'https://media.giphy.com/media/VOq7iem25Z94Y/giphy.gif'
+        gif: ''
       },
       {
         id: 'user2',
         gif: ''
       }
     ];
-    let user = users[1];
-    if (this.props.location.state.layout) {
-      if (this.props.location.state.layout === 'server') {
-        this.layout = ServerLayout(users);
-      } else {
-        this.layout = ClientLayout(user);
+
+    this.state.userList = this.state.users.map(
+      (user, key) => {
+        console.log(key)
+        return (
+          <Col xs={2} md={2} key={user.id}><GifComponent user={this.state.users[key]} /></Col>
+        )
       }
-    } else {
-      this.layout = ServerLayout(users);
-    }
+    )
+
+    setTimeout(
+      () => {
+        console.log('state update');
+        this.setState(
+          {users: [
+            {
+              id: 'user1',
+              gif: ''
+            },
+            {
+              id: 'user2',
+              gif: 'https://media.giphy.com/media/VOq7iem25Z94Y/giphy.gif'
+            }
+          ]}
+        );
+        this.setState(
+          {userList: this.state.users.map(
+            (user, key) => {
+              console.log(key)
+              return (
+                <Col xs={2} md={2} key={user.id}><GifComponent user={this.state.users[key]} /></Col>
+              )
+            })});
+        console.log(this.state);
+      },
+      3000
+    );
   }
 
   render() {
     return (
       <Grid>
         <Row className="show-grid">
-          {this.layout}
+          {this.state.userList}
         </Row>
       </Grid>
     );

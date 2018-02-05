@@ -12,9 +12,8 @@ class GifComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.gif) {
-      console.log(nextProps);
-      this.setState({gif: nextProps.gif});
+    if (nextProps.user.gif) {
+      this.setState({gif: nextProps.user.gif});
     }
   }
 
@@ -24,6 +23,7 @@ class GifComponent extends React.Component {
         <div className="gif-display">
           <div className="center"> Current Image </div>
           <img src={this.state.gif} />
+          <div className="center"> {this.props.user.id} </div>
         </div>
       </div>
     );
