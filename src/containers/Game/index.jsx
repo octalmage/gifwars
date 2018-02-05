@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import {Grid, Row, Col, Button} from 'react-bootstrap';
+import React from 'react';
+import {Grid, Row, Col} from 'react-bootstrap';
 import GifComponent from '../../components/GifComponent';
 import GifSearch from '../../components/GifSearch';
 import { withRouter } from 'react-router'
@@ -23,7 +23,6 @@ class Game extends React.Component {
 
     this.state.userList = this.state.users.map(
       (user, key) => {
-        console.log(key)
         return (
           <Col xs={2} md={2} key={user.id}><GifComponent user={this.state.users[key]} /></Col>
         )
@@ -32,7 +31,6 @@ class Game extends React.Component {
 
     setTimeout(
       () => {
-        console.log('state update');
         this.setState(
           {users: [
             {

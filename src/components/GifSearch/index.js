@@ -33,20 +33,17 @@ class GifSearch extends React.Component {
               (gif, key) => {
                 let setGifBig = this.setGif.bind(this, gif)
                 return (
-                  <Col xs={3} className="gif-selector" onClick={setGifBig} key={gif.gif}><img src={gif.src} /></Col>
+                  <Col xs={3} className={"gif-selector " + (this.state.gif.gif === gif.gif ? 'selected' : 'none')} onClick={setGifBig} key={gif.gif}><img src={gif.src} /></Col>
                 )
               }
             )
           }
         );
-        console.log('finished');
-        console.log(this.state);
       }
     )
   }
 
   setGif(gif) {
-    console.log('test', gif);
     this.setState(
       {
         gif: gif
@@ -55,7 +52,6 @@ class GifSearch extends React.Component {
   }
 
   shuffle() {
-    console.log(this.client.shuffle());
     this.setState({
       gif: this.client.shuffle().src
     })
@@ -64,7 +60,6 @@ class GifSearch extends React.Component {
   lucky() {
     this.client.lucky().then(
       (response) => {
-        console.log(response);
         this.setState({
           gif: {
             gif: response.data.idea,

@@ -5,7 +5,6 @@ class GifComponent extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {};
-    console.log(this.props);
   }
 
   componentDidMount() {

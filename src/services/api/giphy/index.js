@@ -13,7 +13,7 @@ class GiphyClient {
   }
 
   retrieve() {
-    return this.client.search('gifs', {q: this.searchPhrase, limit: 10});
+    return this.client.search('gifs', {q: this.searchPhrase, limit: 12});
   }
 
   translate() {
