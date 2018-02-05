@@ -1,15 +1,24 @@
 import React, { Component } from 'react';
-import {Grid, Row, Col} from 'react-bootstrap';
 import './App.css';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
+
+import Home from './containers/Home';
+import Join from './containers/Join';
+import Start from './containers/Start';
+import Game from './containers/Game';
 
 class App extends Component {
   render() {
     return (
-      <Grid>
-        <Row className="show-grid">
-          <Col xs={12} md={12}><h1 class="center">GifWars</h1></Col>
-        </Row>
-      </Grid>
+      <Router>
+        <div>
+          <hr/>
+          <Route exact path="/" component={Home}/>
+          <Route path="/join" component={Join}/>
+          <Route path="/start" component={Start}/>
+          <Route path="/game/:id" component={Game}/>
+        </div>
+      </Router>
     );
   }
 }
