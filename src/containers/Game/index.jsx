@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col, Button} from 'react-bootstrap';
 import GifComponent from '../../components/GifComponent';
+import GifSearch from '../../components/GifSearch';
 import { withRouter } from 'react-router'
 
 class Game extends React.Component {
@@ -47,12 +48,10 @@ class Game extends React.Component {
         this.setState(
           {userList: this.state.users.map(
             (user, key) => {
-              console.log(key)
               return (
                 <Col xs={2} md={2} key={user.id}><GifComponent user={this.state.users[key]} /></Col>
               )
             })});
-        console.log(this.state);
       },
       3000
     );
@@ -63,6 +62,9 @@ class Game extends React.Component {
       <Grid>
         <Row className="show-grid">
           {this.state.userList}
+        </Row>
+        <Row>
+          <GifSearch prompt="everything is fine" />
         </Row>
       </Grid>
     );

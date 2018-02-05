@@ -1,0 +1,19 @@
+.gif-search-box {
+
+}
+
+.gif-search-box > img {
+  width: 100%;
+}
+
+.gif-selector > img {
+  width: 100%;
+}
+
+.big-gif {
+  height: 200px;
+}
+
+.big-gif > img {
+  height: 100%;
+}
