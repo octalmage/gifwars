@@ -8,21 +8,23 @@ class GifComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({gif: "https://media3.giphy.com/media/o5oLImoQgGsKY/giphy.gif"});
+    this.setState({gif: "https://media.giphy.com/media/ltbKep9Ce8dBS/giphy.gif"});
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.gif) {
+      console.log(nextProps);
       this.setState({gif: nextProps.gif});
     }
   }
 
   render() {
     return (
-      <div className="GifBox">
-        <div className="GifDisplay">
-         <image src={this.state.gif} />
-       </div>
+      <div className="gif-box">
+        <div className="gif-display">
+          <div className="center"> Current Image </div>
+          <img src={this.state.gif} />
+        </div>
       </div>
     );
   }

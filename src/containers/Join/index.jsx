@@ -28,7 +28,14 @@ class Join extends React.Component {
   }
 
   joinGame() {
-    this.props.history.push('/game/1');
+    this.props.history.push(
+      {
+        pathname: '/game/1',
+        state: {
+          layout: 'server'
+        }
+      }
+    );
   }
 
   render() {
