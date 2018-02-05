@@ -4,6 +4,12 @@
   },
   "hosting": {
     "public": "public",
+    "rewrites": [
+      {
+        "source": "/api/games",
+        "function": "games"
+      },
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",
