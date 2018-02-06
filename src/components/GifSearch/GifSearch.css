@@ -1,0 +1,38 @@
+.gif-search-box {
+
+}
+
+.gif-search-box > img {
+  width: 100%;
+}
+
+.gif-selector {
+  border: 1px rgba(0,0,0,0) solid;
+  box-sizing: border-box;
+}
+
+.gif-selector.selected {
+  border: 1px green solid;
+}
+
+.gif-selector > img {
+  height: 100px;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.big-gif {
+  height: 200px;
+  margin-bottom: 10px;
+}
+
+.big-gif > img {
+  height: 100%;
+  left: 50%;
+  position: relative;
+  transform: translateX(-50%);
+}
+
+.gif-search-buttons {
+  margin: 30px 0;
+}

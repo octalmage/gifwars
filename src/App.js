@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
+
+import Home from './containers/Home';
+import Join from './containers/Join';
+import Start from './containers/Start';
+import Game from './containers/Game';
+import Stage from './containers/Stage';
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <Router>
+        <div>
+          <hr/>
+          <Route exact path="/" component={Home}/>
+          <Route path="/join" component={Join}/>
+          <Route path="/start" component={Start}/>
+          <Route path="/game/:id" component={Game}/>
+          <Route path="/stage/:id" component={Stage}/>
+        </div>
+      </Router>
     );
   }
 }
