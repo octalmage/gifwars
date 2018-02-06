@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
 import Game from '../../services/Game';
 import firebase from '../../services/Firebase';
+import avatar from '../../images/dino_thumb.png';
+import './stage.css'
 
 class Stage extends Component {
   constructor(props) {
@@ -34,10 +36,16 @@ class Stage extends Component {
         <Row className="show-grid">
           <Col xs={12} md={12} >
             <h1 className="App-title">Start a Game</h1>
+
             <p>Room Code: {this.state.roomcode}</p>
             <p>
               Players: <br />
-              {this.state.players.map(player => <span key={player}>{player}<br /></span>)}
+              {this.state.players.map(player =>
+                <span key={player}>
+                  <span className= "playerText">{player}</span>
+                <img src={avatar} className="playerImage"/>
+                <br />
+              </span>)}
             </p>
           </Col>
         </Row>
