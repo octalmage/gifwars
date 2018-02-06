@@ -76,7 +76,7 @@ class GifSearch extends React.Component {
   render() {
     return (
       <Row>
-        <Col xs={7} className="gif-search-box">
+        <Col md={7} xs={12} className="gif-search-box">
           <Row>
             <div className="big-gif"><img src={this.state.gif.og_src} /></div>
           </Row>
@@ -93,7 +93,7 @@ class GifSearch extends React.Component {
             )}
           </Row>
         </Col>
-        <Col xs={5}>
+        <Col xs={12} md={5}>
           <Row className="center">
             <Button className="gif-search-buttons" bsStyle="info" bsSize="large" onClick={this.shuffle}>Shuffle</Button>
           </Row>
