@@ -28,6 +28,9 @@ class Game extends React.Component {
         <Row>
           <GifSearch user={this.state.user} game={this.state.game}/>
         </Row>
+        <Row>
+          <img src={ require('./images/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif') } />
+        </Row>
       </Grid>
     );
   }
