@@ -4,7 +4,7 @@ export default class Game {
   }
 
   route(route) {
-    return `${this.host}/${route}`;
+    return `${this.host}${route}`;
   }
 
   startGame() {
