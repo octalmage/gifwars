@@ -34,7 +34,12 @@ exports.games = functions.https.onRequest(app);
 const createGame = (owner) => {
   return new Promise((resolve) => {
     const roomcode = makeid(4);
-    admin.database().ref(`/games/${roomcode}`).set({ players: [owner] }).then(() => {
+    admin.database().ref(`/games/${roomcode}`)
+    .set({
+      players: [owner],
+      round: 0,
+      stage: 'waiting',
+    }).then(() => {
       return resolve(roomcode);
     });
   });
@@ -50,7 +55,10 @@ const joinGame = (roomcode, player) => {
 
 const startGame = (roomcode) => {
   return new Promise((resolve) => {
-    return admin.database().ref(`/games/${roomcode}/round`).set(1).then(resolve);
+    return admin.database().ref(`/games/${roomcode}`).set({
+      round: 1,
+      stage: 'picking',
+    }).then(resolve);
   })
   .then(() => {
 
