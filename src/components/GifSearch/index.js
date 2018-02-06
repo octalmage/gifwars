@@ -11,7 +11,7 @@ class GifSearch extends React.Component {
     this.state = {
       gif: {}
     };
-    this.client = new GiphyClient(this.props.prompt);
+    this.client = new GiphyClient(this.props.game.prompt);
     this.shuffle = this.shuffle.bind(this);
     this.lucky = this.lucky.bind(this);
     this.gifs = [];
@@ -56,6 +56,9 @@ class GifSearch extends React.Component {
   }
 
   lucky() {
+    this.setState(
+      {luckyLoading: true}
+    );
     this.client.lucky().then(
       (response) => {
         this.setState({
@@ -63,7 +66,8 @@ class GifSearch extends React.Component {
             gif: response.data.idea,
             src: response.data.images.fixed_width_downsampled.gif_url,
             og_src: response.data.images.original.gif_url
-          }
+          },
+          luckyLoading: false
         })
       }
     )
@@ -72,7 +76,7 @@ class GifSearch extends React.Component {
   render() {
     return (
       <Row>
-        <Col xs={6} className="gif-search-box">
+        <Col xs={7} className="gif-search-box">
           <Row>
             <div className="big-gif"><img src={this.state.gif.og_src} /></div>
           </Row>
@@ -89,15 +93,15 @@ class GifSearch extends React.Component {
             )}
           </Row>
         </Col>
-        <Col xs={2}>
+        <Col xs={5}>
           <Row className="center">
-            <Button bsStyle="primary" onClick={this.shuffle}>Shuffle</Button>
+            <Button className="gif-search-buttons" bsStyle="info" bsSize="large" onClick={this.shuffle}>Shuffle</Button>
           </Row>
           <Row className="center">
-            <Button bsStyle="primary" onClick={this.lucky}>I'm feeling lucky</Button>
+            <Button className="gif-search-buttons" disabled={this.state.luckyLoading} bsStyle="info" bsSize="large" onClick={this.lucky}>I'm feeling lucky</Button>
           </Row>
           <Row className="center">
-            <Button bsStyle="primary" onClick={this.submit}>Submit</Button>
+            <Button className="gif-search-buttons" bsStyle="primary" bsSize="large" onClick={this.submit}>Submit</Button>
           </Row>
         </Col>
       </Row>

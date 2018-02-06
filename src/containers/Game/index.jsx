@@ -12,18 +12,21 @@ class Game extends React.Component {
       name: 'User1'
     }
     this.state.game = {
-      id: '1',
-      expire: (new Date()).getTime() + 3000
+      id: 1,
+      expire: (new Date()).getTime() + 3000,
+      round: 1,
+      prompt: 'trains'
     }
   }
 
   render() {
     return (
       <Grid>
-        <Row className="show-grid">
+        <Row className="center">
+          <h1> {this.state.user.name + ' in ' + this.state.game.id + ' on Round ' + this.state.game.round } </h1>
         </Row>
         <Row>
-          <GifSearch prompt="everything is fine" user={this.state.user} game={this.state.game}/>
+          <GifSearch user={this.state.user} game={this.state.game}/>
         </Row>
       </Grid>
     );
