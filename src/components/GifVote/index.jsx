@@ -19,6 +19,7 @@ class GifVote extends React.Component {
     this.state.expireTime = (new Date()).getTime() + 15 * 1000;
     this.state.coundown = 0;
     this.submit = this.submit.bind(this);
+    this.randomWinner = this.randomWinner.bind(this);
   }
 
   submit() {
