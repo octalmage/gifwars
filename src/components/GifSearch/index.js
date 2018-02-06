@@ -18,7 +18,6 @@ class GifSearch extends React.Component {
     this.submit = this.submit.bind(this);
     this.buildList();
     this.state.countdown = 0;
-    this.setupTimer();
   }
 
   componentDidMount() {
@@ -31,6 +30,7 @@ class GifSearch extends React.Component {
         response.data.forEach((gifObject) => {
           this.gifs.push(this.client.convert(gifObject));
         });
+        this.setupTimer();
         this.setState(
           {
             gifs: this.gifs
@@ -46,10 +46,8 @@ class GifSearch extends React.Component {
   }
 
   setupTimer() {
-    this.setState(
-      {currentTime: this.updateTime(),
-      countdown: Math.round((this.props.game.expire - this.updateTime())/1000)}
-    );
+    this.state.currentTime = this.updateTime();
+    this.state.countdown = Math.round((this.props.game.expire - this.updateTime())/1000);
     this.timerInterval = setInterval(
       () => {
         if (this.props.game.expire < this.state.currentTime) {
