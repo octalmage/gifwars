@@ -18,7 +18,7 @@ class Game extends React.Component {
 
     this.state.game = {
       id: 1,
-      expire: (new Date()).getTime() + 3000,
+      expire: (new Date()).getTime() + 30000,
       round: 1,
       prompt: 'trains',
       stage: 'waiting',

@@ -15,7 +15,10 @@ class GifSearch extends React.Component {
     this.shuffle = this.shuffle.bind(this);
     this.lucky = this.lucky.bind(this);
     this.gifs = [];
+    this.submit = this.submit.bind(this);
     this.buildList();
+    this.state.countdown = 0;
+    this.setupTimer();
   }
 
   componentDidMount() {
@@ -36,6 +39,36 @@ class GifSearch extends React.Component {
       }
     )
   }
+
+  updateTime() {
+    //cloud function for time
+    return (new Date()).getTime();
+  }
+
+  setupTimer() {
+    this.setState(
+      {currentTime: this.updateTime(),
+      countdown: Math.round((this.props.game.expire - this.updateTime())/1000)}
+    );
+    this.timerInterval = setInterval(
+      () => {
+        if (this.props.game.expire < this.state.currentTime) {
+          this.setState(
+            {currentTime: this.updateTime(),
+            countdown: 0}
+          );
+          //submit current gif in state
+          clearInterval(this.timerInterval);
+          return;
+        }
+        this.setState(
+          {currentTime: this.updateTime(),
+          countdown: Math.round((this.props.game.expire - this.updateTime())/1000)}
+        );
+      }, 500
+    );
+  }
+
 
   setGif(gif) {
     this.setState(
@@ -76,6 +109,9 @@ class GifSearch extends React.Component {
   render() {
     return (
       <Row>
+        <Col md={12} xs={12} className="center">
+          <h2>{ this.state.countdown } seconds remaining</h2>
+        </Col>
         <Col md={7} xs={12} className="gif-search-box">
           <Row>
             <div className="big-gif"><img src={this.state.gif.og_src} /></div>
