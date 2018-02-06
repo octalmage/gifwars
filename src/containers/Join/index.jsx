@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col, Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button} from 'react-bootstrap';
 import { BrowserHistory } from 'react-router-dom';
+import Game from '../../services/Game';
 
 class Join extends React.Component {
   constructor(props, context) {
@@ -9,26 +10,38 @@ class Join extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.joinGame = this.joinGame.bind(this);
     this.state = {
-      value: ''
+      roomcode: '',
+      name: '',
     };
+
+    this.game = new Game();
   }
 
   getValidationState(value) {
-    const length = value ? value.length : this.state.value.length;
+    const length = value ? value.length : this.state.roomcode.length;
     if (length >= 4) return 'success';
     else if (length < 4) return 'error';
     return null;
   }
 
   handleChange(e) {
+    let value = e.target.value;
+
+    if (e.target.name === 'roomcode') {
+      value = value.toUpperCase();
+    }
+    
     this.setState({
-      value: e.target.value,
+      [e.target.name]: value,
       valid: this.getValidationState(e.target.value)
     });
   }
 
   joinGame() {
-    this.props.history.push('/game/1');
+    this.game.joinGame(this.state.roomcode, this.state.name)
+    .then(response => {
+      this.props.history.push(`/game/${this.state.roomcode}`);
+    });
   }
 
   render() {
@@ -52,9 +65,17 @@ class Join extends React.Component {
                 <Col sm={10}>
                   <FormControl
                     type="text"
-                    value={this.state.value}
+                    value={this.state.name}
+                    placeholder="Enter Name"
+                    onChange={this.handleChange}
+                    name="name"
+                  />
+                  <FormControl
+                    type="text"
+                    value={this.state.roomcode}
                     placeholder="Enter Code"
                     onChange={this.handleChange}
+                    name="roomcode"
                   />
                   <FormControl.Feedback />
                 </Col>

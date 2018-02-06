@@ -6,6 +6,7 @@ import Home from './containers/Home';
 import Join from './containers/Join';
 import Start from './containers/Start';
 import Game from './containers/Game';
+import Stage from './containers/Stage';
 
 class App extends Component {
   render() {
@@ -17,6 +18,7 @@ class App extends Component {
           <Route path="/join" component={Join}/>
           <Route path="/start" component={Start}/>
           <Route path="/game/:id" component={Game}/>
+          <Route path="/stage/:id" component={Stage}/>
         </div>
       </Router>
     );

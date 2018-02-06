@@ -3,10 +3,17 @@ const express = require('express');
 const app = express();
 const admin = require('firebase-admin');
 const values = require('object.values');
+const cors = require('cors')({ origin: true });
 
+const { isOdd, makeid } = require('./src/Utils');
+
+// TODO: Read these from the file.
 const prompts = ["What's the Mona Lisa smiling about?"];
 
 admin.initializeApp(functions.config().firebase);
+
+// Enable cors support.
+app.use(cors);
 
 app.post('/', (request, response) => {
   createGame(request.body).then((roomcode) => {
@@ -101,8 +108,6 @@ const generateMoves = ({ players, round, roomcode, roomKey }) => {
   }
 };
 
-const isOdd = num => { return num % 2; }
-
 const addMove = ({ round, roomcode, prompt, player, roomKey}) => {
   return new Promise(resolve => {
     admin.database().ref('/moves').push(
@@ -126,12 +131,3 @@ const generateMove = ({ round, roomcode, player, prompt }) => ({
   gif: '',
   votes: [],
 });
-
-const makeid = (len) => {
-  var text = "";
-  const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  for (let i = 0; i < len; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
