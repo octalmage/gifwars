@@ -11,7 +11,7 @@ class GifSearch extends React.Component {
     this.state = {
       gif: {}
     };
-    this.client = new GiphyClient(this.props.game.prompt);
+    this.client = new GiphyClient(this.props.game.round.prompt);
     this.shuffle = this.shuffle.bind(this);
     this.lucky = this.lucky.bind(this);
     this.gifs = [];

@@ -5,7 +5,7 @@ class GifBox extends React.Component {
 
   render() {
     return (
-      <Col md={3} xs={4} className={'gif-selector ' + (this.props.active ? 'selected' : '')} ><img src={this.props.gif.src} /></Col>
+      <Col md={3} xs={4} className={'gif-selector ' + (this.props.active ? 'selected' : '')} ><img src={this.props.gif.src} alt={this.props.gif.gif} /></Col>
     );
   }
 }
