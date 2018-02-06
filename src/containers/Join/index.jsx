@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-import {Grid, Row, Col, Form, FormGroup, ControlLabel, FormControl, HelpBlock, Button} from 'react-bootstrap';
-import { BrowserHistory } from 'react-router-dom';
+import React from 'react';
+import {Grid, Row, Col, Form, FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap';
 import Game from '../../services/Game';
 
 class Join extends React.Component {
