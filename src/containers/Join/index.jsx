@@ -30,7 +30,7 @@ class Join extends React.Component {
     if (e.target.name === 'roomcode') {
       value = value.toUpperCase();
     }
-    
+
     this.setState({
       [e.target.name]: value,
       valid: this.getValidationState(e.target.value)
