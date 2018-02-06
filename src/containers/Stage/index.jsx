@@ -9,7 +9,7 @@ import avatar3 from '../../images/caterpillar_thumb.png'
 import avatar4 from '../../images/doggo_thumb.png'
 import avatar5 from '../../images/birb_thumb.png'
 import avatar6 from '../../images/giraffe_thumb.png'
-import avatar7 from '../../images/koaler.png'
+import avatar7 from '../../images/koaler_thumb.png'
 import './stage.css'
 
 
@@ -52,7 +52,7 @@ class Stage extends Component {
               {this.state.players.map((player, i) =>
                 <span key ={player}>
                   <span className= "playerText">{player}</span>
-                <img src = {avatar3} className="playerImage"/>
+                <img src = {images[i]} className="playerImage"/>
                 <br />
               </span>)}
             </p>
