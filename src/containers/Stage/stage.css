@@ -1,12 +1,18 @@
 .playerText{
-  padding: 20px;
+  padding: 10px;
+  color: white;
 }
 
 .playerImage{
-  width: 40px;
-  height: 40px;
-  padding: 10px auto;
-  margin: 10px auto;
+  width: 70px;
+  height: 70px;
+  padding: 5px;
+  display: -webkit-flex; /* Safari */
+  display: flex;
+
+
+
+
 
 
 }
