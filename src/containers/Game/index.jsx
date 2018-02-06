@@ -59,8 +59,8 @@ class Game extends React.Component {
     stateRef.on('value', (snapshot) => {
       const game = snapshot.val();
       this.setState({
-        stage: 'voting',
-        round: 1,
+        stage: game.stage,
+        round: game.round,
       });
     });
   }
