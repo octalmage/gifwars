@@ -19,6 +19,8 @@ class Stage extends Component {
 
     this.state = {
       players: [],
+      stage: 'waiting',
+      round: 0,
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -36,9 +38,19 @@ class Stage extends Component {
         this.setState({ players });
       });
 
+      const gameRef = firebase.database().ref(`games/${roomcode}`);
+
+      gameRef.on('value', snapshot => {
+        const game = snapshot.val();
+        this.setState({
+          stage: game.stage,
+          round: game.round,
+        });
+      });
   }
 
   render() {
+<<<<<<< HEAD
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8]
     return (
       <Grid>
@@ -56,6 +68,28 @@ class Stage extends Component {
                 <br />
               </span>)}
             </p>
+=======
+    const { stage } = this.state;
+    return (
+      <Grid>
+        <Row className="show-grid">
+          <Col xs={12} md={12}>
+            {stage === 'waiting' &&
+            <React.Fragment>
+              <h1 className="App-title">Start a Game</h1>
+              <p>Room Code: {this.state.roomcode}</p>
+              <p>
+                Players: <br />
+                {this.state.players.map(player => <span key={player}>{player}<br /></span>)}
+              </p>
+            </React.Fragment>
+          }
+          {stage === 'picking' &&
+          <React.Fragment>
+            Answer the prompts on your device.
+          </React.Fragment>
+          }
+>>>>>>> 207d841c61cca6c8c993b6c784720a38ce4d159c
           </Col>
         </Row>
       </Grid>
