@@ -18,6 +18,7 @@ class GifVote extends React.Component {
     this.state.pickedGif = {}
     this.state.expireTime = (new Date()).getTime() + 15 * 1000;
     this.state.coundown = 0;
+    this.submit = this.submit.bind(this);
   }
 
   submit() {
@@ -25,7 +26,9 @@ class GifVote extends React.Component {
   }
 
   randomWinner() {
-
+    let randomGif = this.props.round.users[Math.round(Math.random()*1)].gif;
+    this.setGif(randomGif);
+    this.submit();
   }
 
   setGif(gif) {
@@ -58,7 +61,10 @@ class GifVote extends React.Component {
             }
           )}
           <Col xs={12} md={1} className="center">
-            <Button bsSize="large" bsStyle="primary">Vote</Button>
+            <Button bsSize="large" bsStyle="primary" onClick={this.submit}>Vote</Button>
+          </Col>
+          <Col xs={12} md={1} className="center">
+            <Button bsSize="large" bsStyle="primary" onClick={this.randomWinner}>Make my mind for me</Button>
           </Col>
         </Row>
       </div>
