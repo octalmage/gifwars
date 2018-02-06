@@ -1,6 +1,6 @@
 export default class Game {
   constructor() {
-    this.host = 'http://localhost:5000/gif-war/us-central1/games';
+    this.host = 'https://us-central1-gif-war.cloudfunctions.net/games/';
   }
 
   route(route) {

@@ -3,6 +3,7 @@ import {Grid, Row, Col} from 'react-bootstrap';
 import GifComponent from '../../components/GifComponent';
 import GifSearch from '../../components/GifSearch';
 import { withRouter } from 'react-router'
+import background from './images/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif';
 
 class Game extends React.Component {
   constructor(props, context) {
@@ -29,7 +30,7 @@ class Game extends React.Component {
           <GifSearch user={this.state.user} game={this.state.game}/>
         </Row>
         <Row>
-          <img src={ require('./images/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif') } />
+          <img src={background} />
         </Row>
       </Grid>
     );
