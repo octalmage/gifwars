@@ -91,7 +91,8 @@ class Game extends React.Component {
         }
         {stage === 'waiting' &&
           <React.Fragment>
-            Waiting for other players.
+            Waiting for other players to join.
+            <br />
             <br />
             <Button
               onClick={() => {
@@ -99,11 +100,13 @@ class Game extends React.Component {
               }}
               bsStyle="primary"
               bsSize="normal">
+
               All players have joined
             </Button>
           </React.Fragment>
         }
         <Row>
+          <br />
           <img src={background} />
         </Row>
       </Grid>
