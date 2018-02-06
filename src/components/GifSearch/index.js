@@ -4,6 +4,7 @@ import {Row, Col, Button} from 'react-bootstrap';
 
 import GifBox from '../GifBox';
 import GiphyClient from '../../services/api/giphy';
+import FirebaseHelper from '../../helper/FirebaseHelper';
 
 class GifSearch extends React.Component {
   constructor(props, context) {
@@ -11,17 +12,19 @@ class GifSearch extends React.Component {
     this.state = {
       gif: {}
     };
-    this.client = new GiphyClient(this.props.game.round.prompt);
+
     this.shuffle = this.shuffle.bind(this);
     this.lucky = this.lucky.bind(this);
     this.gifs = [];
     this.submit = this.submit.bind(this);
-    this.buildList();
     this.state.countdown = 0;
   }
 
-  componentDidMount() {
-    this.setState({search: this.props.prompt});
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.move) {
+      this.client = new GiphyClient(this.props.move.prompt);
+      this.buildList();
+    }
   }
 
   buildList() {
@@ -46,8 +49,10 @@ class GifSearch extends React.Component {
   }
 
   setupTimer() {
-    this.state.currentTime = this.updateTime();
-    this.state.countdown = Math.round((this.props.game.expire - this.updateTime())/1000);
+    this.setState({
+      currentTime: this.updateTime(),
+      countdown: Math.round((this.props.game.expire - this.updateTime())/1000)
+    })
     this.timerInterval = setInterval(
       () => {
         if (this.props.game.expire < this.state.currentTime) {
@@ -78,6 +83,7 @@ class GifSearch extends React.Component {
 
   submit() {
     // send up this.state.gif to the server as the selected gif
+    (new FirebaseHelper).submit(this.gif, this.props.user.name)
   }
 
   shuffle() {

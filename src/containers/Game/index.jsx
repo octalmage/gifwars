@@ -1,6 +1,5 @@
 import React from 'react';
-import {Grid, Row, Col} from 'react-bootstrap';
-import GifComponent from '../../components/GifComponent';
+import {Grid, Row} from 'react-bootstrap';
 import GifSearch from '../../components/GifSearch';
 import { withRouter } from 'react-router';
 import { Button } from 'react-bootstrap';
@@ -16,53 +15,70 @@ class Game extends React.Component {
     this.state.user = {
       name: 'User1'
     }
-
-    this.state.game = {
-      id: 1,
-      expire: (new Date()).getTime() + 30000,
-      round: 1,
-      rounds: [
-        {
-          prompt: 'trains',
-          users: [
-            {
-              game: "IRBT",
-              gif: {
-                gif: 'asdf',
-                src: "https://media0.giphy.com/media/3o85xnoIXebk3xYx4Q/giphy.gif"
-              },
-              player: "Tom",
-              prompt: 'trains',
-              round: 1
-            },
-            {
-              game: "IRBT",
-              gif: {
-                gif: 'asdf1',
-                src: "https://media2.giphy.com/media/qYGxNHTsCX2Qo/giphy.gif"
-              },
-              player: "John",
-              prompt: 'trains',
-              round: 1
-            }
-          ]
-        }
-      ],
-      stage: 'waiting',
-    }
+    this.state.currentMoves = [];
   }
 
   componentDidMount() {
     const roomcode = this.props.match.params.id;
-    const stateRef = firebase.database().ref(`games/${roomcode}`);
+    const gameRef = firebase.database().ref(`games/${roomcode}`);
 
-    stateRef.on('value', (snapshot) => {
+    gameRef.on('value', (snapshot) => {
       const game = snapshot.val();
       this.setState({
         stage: game.stage,
+        id: roomcode,
         round: game.round,
+        rounds: game.rounds,
+        currentRound: [],
+        pairId: game.pair_id
       });
+      if (game.rounds) {
+        const roundRef = firebase.database().ref(`rounds/${game.rounds[game.round]}`);
+        roundRef.on('value', (snapshot) => {
+          const round = snapshot.val();
+          if (round) {
+            Object.values(round).map(
+              (move) => {
+                const moveRef = firebase.database().ref(`moves/${move}`);
+                moveRef.on('value', (snapshot) => {
+                  let moveBig = snapshot.val();
+                  moveBig.id = move;
+                  this.moveUpdate(moveBig);
+                });
+              }
+            );
+          }
+        });
+      }
     });
+  }
+
+  moveUpdate(move) {
+    let currentMoves = this.state.currentMoves;
+    let moveBuffer = [];
+    if (move.player === this.state.user.name) {
+      this.setState({
+        myMove: move
+      });
+    }
+    if (currentMoves.length > 0) {
+      moveBuffer = this.state.currentMoves.map(
+        (currentMove) => {
+          if (currentMove.id === move.id) {
+            return;
+          }
+          return currentMove;
+        }
+      )
+    }
+    moveBuffer.push(move);
+    console.log('moves');
+    console.log(moveBuffer);
+    this.setState(
+      {
+        currentMoves: moveBuffer
+      }
+    );
   }
 
   render() {
@@ -72,20 +88,20 @@ class Game extends React.Component {
         {stage === 'picking' &&
           <React.Fragment>
             <Row className="center">
-              <h1> {this.state.user.name + ' in ' + this.state.game.id + ' on Round ' + this.state.game.round } </h1>
+              <h1> {this.state.user.name + ' in ' + this.state.id + ' on Round ' + this.state.round } </h1>
             </Row>
             <Row>
-              <GifSearch user={this.state.user} game={this.state.game}/>
+              <GifSearch user={this.state.user} move={this.state.myMove}/>
             </Row>
           </React.Fragment>
         }
         {stage === 'voting' &&
           <React.Fragment>
             <Row className="center">
-              <h1> {'Voting in ' + this.state.game.id + ' on Round ' + this.state.game.round } </h1>
+              <h1> {'Voting in ' + this.state.id + ' on Round ' + this.state.round } </h1>
             </Row>
             <Row>
-              <GifVote user={this.state.user} round={this.state.game.rounds[this.state.game.rounds.length - 1]}/>
+              <GifVote user={this.state.user} pair={this.state.paidId} moves={this.state.currentMoves}/>
             </Row>
           </React.Fragment>
         }
@@ -98,7 +114,7 @@ class Game extends React.Component {
                 new GameAPI().startGame(this.props.match.params.id)
               }}
               bsStyle="primary"
-              bsSize="normal">
+              bsSize="large">
               All players have joined
             </Button>
           </React.Fragment>

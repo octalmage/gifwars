@@ -1,12 +1,13 @@
 import React from 'react';
 import './GifVote.css';
 import {Row, Col, Button} from 'react-bootstrap';
+import FirebaseHelper from '../../helper/FirebaseHelper';
 
 class GifVote extends React.Component {
   /*
   Descr: vote for gif (stage = 'voting')
   props:
-    game: GameObject
+    move: GameObject
     user: UserObject
   state:
     pickedGif: GifObject
@@ -20,6 +21,16 @@ class GifVote extends React.Component {
     this.state.coundown = 0;
     this.submit = this.submit.bind(this);
     this.randomWinner = this.randomWinner.bind(this);
+    this.state.currentPair = [
+      (new FirebaseHelper()).emptyMove(),
+      (new FirebaseHelper()).emptyMove()
+    ]
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.moves.length > 1) {
+      this.getPair(nextProps.moves);
+    }
   }
 
   submit() {
@@ -27,30 +38,48 @@ class GifVote extends React.Component {
   }
 
   randomWinner() {
-    let randomGif = this.props.round.users[Math.round(Math.random()*1)].gif;
+    let randomGif = this.props.currentPair[Math.round(Math.random()*1)].gif;
     this.setGif(randomGif);
     this.submit();
   }
 
+  getPair(moves) {
+    //update voting to handle pairs
+    // const currentPairId = this.props.pair;
+    // const currentPair = this.props.moves.map(
+    //   (move) => {
+    //     if (move.pair_id === currentPairId) {
+    //       return move;
+    //     }
+    //   }
+    // );
+    // Use props.pair to compare against pair ids
+    const currentPair = [
+      moves[0],
+      moves[1]
+    ]
+    this.setState({
+      currentPair: currentPair
+    });
+  }
+
   setGif(gif) {
-    console.log(gif);
     this.setState(
       {pickedGif: gif}
     );
   }
 
   render() {
-    const round = this.props.round;
     return (
       <div className="gif-vote">
         <Row className="center">
-          <h2>Prompt: "{round.prompt}"</h2>
+          <h2>Prompt: "{this.state.currentPair[0].prompt}"</h2>
         </Row>
         <Row className="center">
          <h3>{this.state.countdown} time remaining</h3>
         </Row>
         <Row>
-          {round.users.map(
+          {this.state.currentPair.map(
             (user, key) => {
               let setPickedGif = this.setGif.bind(this, user.gif, key)
               return (
