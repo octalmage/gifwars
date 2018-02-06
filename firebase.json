@@ -8,6 +8,10 @@
       {
         "source": "/api/games",
         "function": "games"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
       }
     ],
     "ignore": [
