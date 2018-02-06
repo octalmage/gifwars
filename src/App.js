@@ -7,10 +7,7 @@ import Join from './containers/Join';
 import Start from './containers/Start';
 import Game from './containers/Game';
 import Stage from './containers/Stage';
-<<<<<<< HEAD
 
-=======
->>>>>>> 57d22a87ad825afd6d9fdb11735bf36a49adb190
 
 class App extends Component {
   render() {
