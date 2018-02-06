@@ -15,6 +15,10 @@
   border: 1px green solid;
 }
 
+.gif-selector:hover {
+  border: 1px green solid;
+}
+
 .gif-selector > img {
   height: 100px;
   margin: 10px 0;
