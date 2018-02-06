@@ -25,11 +25,62 @@ app.post('/:id/join', (request, response) => {
   response.send(joinGame(request.params.id, request.body))
 });
 
+
 app.post('/:id/start', (request, response) => {
-  response.send(startGame(request.params.id))
+  const roomcode = request.params.id;
+  startGame(roomcode);
 });
 
+
+exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
+    .onWrite(event => {
+      const roomcode = event.params.roomcode;
+      const stage = event.data.val();
+
+      return admin.database().ref(`/games/${roomcode}/round`)
+      .once('value')
+      .then(snapshot => snapshot.val())
+      .then(round => {
+        let newStage = 'done';
+        let timer = 10;
+
+        if (stage === 'waiting') {
+          return;
+        } else if (stage === 'picking') {
+          newStage = 'voting';
+        } else if (stage === 'voting') {
+          newStage = 'score';
+        } else if (stage === 'score') {
+          newStage = 'picking';
+          round += 1;
+        }
+
+        if (round === 3 && stage === 'score') {
+          return;
+        }
+
+        return startTimer(roomcode, timer)
+        .then(() => admin.database().ref(`/games/${roomcode}`).update({ round, stage: newStage }));
+      });
+    });
+
 exports.games = functions.https.onRequest(app);
+
+
+const startTimer = (roomcode, time) => [...Array(time+1)].reduce( (p, _, i) =>
+p.then(_ => new Promise(resolve =>
+  setTimeout(() => {
+    admin.database().ref(`/games/${roomcode}/timer`).once('value').then((snapshot) => {
+      let timer = snapshot.val();
+      if (timer) {
+        timer = timer - 1;
+      } else {
+        timer = time;
+      }
+      return admin.database().ref(`/games/${roomcode}/timer`).set(timer);
+    }).then(resolve);
+  }, 1000)
+)), Promise.resolve());
 
 const createGame = (owner) => {
   return new Promise((resolve) => {
@@ -45,23 +96,16 @@ const createGame = (owner) => {
   });
 };
 
-const joinGame = (roomcode, player) => {
-  return new Promise((resolve) => {
-    admin.database().ref(`/games/${roomcode}/players`).push(player).then(() => {
-      return resolve();
-    });
-  });
-};
+const joinGame = (roomcode, player) => admin.database().ref(`/games/${roomcode}/players`).push(player);
 
 const startGame = (roomcode) => {
   return new Promise((resolve) => {
-    return admin.database().ref(`/games/${roomcode}`).set({
+    return admin.database().ref(`/games/${roomcode}`).update({
       round: 1,
       stage: 'picking',
     }).then(resolve);
   })
   .then(() => {
-
     const roomKey = admin.database().ref('/rounds').push();
     const getRoomKey = admin.database().ref(`/games/${roomcode}/rounds/1`).set(roomKey.key).then(() => roomKey.key);
 
@@ -86,14 +130,16 @@ const generateMoves = ({ players, round, roomcode, roomKey }) => {
       roomcode,
       prompt,
       roomKey,
-      player: players[x]
+      player: players[x],
+      pair_id: 1,
     });
     addMove({
       round,
       roomcode,
       prompt,
       roomKey,
-      player: players[x+1]
+      player: players[x+1],
+      pair_id: 1,
     });
   }
 
@@ -124,6 +170,7 @@ const addMove = ({ round, roomcode, prompt, player, roomKey}) => {
         roomcode,
         prompt,
         player,
+        pair,
       })
     )
     // Add the move key to the moves list.
