@@ -12,8 +12,9 @@ class GiphyClient {
     return gifs[Math.floor(Math.random() * gifs.length)];
   }
 
-  retrieve() {
-    return this.client.search('gifs', {q: this.searchPhrase, limit: 12});
+  retrieve(nsfw) {
+    let rating = nsfw ? '' : this.rating;
+    return this.client.search('gifs', {q: this.searchPhrase, limit: 12, rating: rating});
   }
 
   translate() {
@@ -28,8 +29,9 @@ class GiphyClient {
     };
   }
 
-  lucky() {
-    return this.client.random('gifs', {});
+  lucky(nsfw) {
+    let rating = nsfw ? '' : this.rating;
+    return this.client.random('gifs', {rating: rating});
   }
 }
 

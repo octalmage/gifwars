@@ -55,11 +55,11 @@ class GifSearch extends React.Component {
     })
   }
 
-  lucky() {
+  lucky(nsfw) {
     this.setState(
       {luckyLoading: true}
     );
-    this.client.lucky().then(
+    this.client.lucky(nsfw).then(
       (response) => {
         this.setState({
           gif: {
