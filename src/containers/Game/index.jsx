@@ -89,7 +89,7 @@ class Game extends React.Component {
             </Row>
           </React.Fragment>
         }
-        {!stage === 'waiting' &&
+        {stage === 'waiting' &&
           <React.Fragment>
             Waiting for other players.
             <br />
