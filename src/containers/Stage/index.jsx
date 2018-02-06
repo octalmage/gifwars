@@ -44,11 +44,11 @@ class Stage extends Component {
       <Grid>
         <Row className="show-grid">
           <Col xs={12} md={12} >
-            <h1 className="App-title">Start a Game</h1>
+            <h1 className="playerText">Start a Game</h1>
 
-            <p>Room Code: {this.state.roomcode}</p>
-            <p>
-              Players: <br />
+            <p>  <span className= "playerText">Room Code: {this.state.roomcode}</span></p>
+            <p>   <span className= "playerText">
+              Players: </span><br />
               {this.state.players.map((player, i) =>
                 <span key ={player}>
                   <span className= "playerText">{player}</span>
