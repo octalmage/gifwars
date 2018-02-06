@@ -8,7 +8,7 @@
       {
         "source": "/api/games",
         "function": "games"
-      },
+      }
     ],
     "ignore": [
       "firebase.json",
