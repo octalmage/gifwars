@@ -2,6 +2,7 @@ import React from 'react';
 import './GifSearch.css';
 import {Row, Col, Button} from 'react-bootstrap';
 
+import GifBox from '../GifBox';
 import GiphyClient from '../../services/api/giphy';
 
 class GifSearch extends React.Component {
@@ -29,14 +30,7 @@ class GifSearch extends React.Component {
         });
         this.setState(
           {
-            list: this.gifs.map(
-              (gif, key) => {
-                let setGifBig = this.setGif.bind(this, gif)
-                return (
-                  <Col xs={3} className={"gif-selector " + (this.state.gif.gif === gif.gif ? 'selected' : 'none')} onClick={setGifBig} key={gif.gif}><img src={gif.src} /></Col>
-                )
-              }
-            )
+            gifs: this.gifs
           }
         );
       }
@@ -46,14 +40,18 @@ class GifSearch extends React.Component {
   setGif(gif) {
     this.setState(
       {
-        gif: gif
+        gif: gif,
       }
     );
   }
 
+  submit() {
+    // send up this.state.gif to the server as the selected gif
+  }
+
   shuffle() {
     this.setState({
-      gif: this.client.shuffle().src
+      gif: this.client.shuffle(this.gifs)
     })
   }
 
@@ -79,15 +77,27 @@ class GifSearch extends React.Component {
             <div className="big-gif"><img src={this.state.gif.og_src} /></div>
           </Row>
           <Row>
-            {this.state.list}
+            {this.gifs.map(
+              (gif, key) => {
+                let setGifBig = this.setGif.bind(this, gif, key)
+                return (
+                  <div onClick={setGifBig} key={gif.gif}>
+                    <GifBox active={this.state.gif.gif === gif.gif} gif={gif} />
+                  </div>
+                );
+              }
+            )}
           </Row>
         </Col>
         <Col xs={2}>
-          <Row>
-            <Button bsStyle="primary" className="center" onClick={this.shuffle}>Shuffle</Button>
+          <Row className="center">
+            <Button bsStyle="primary" onClick={this.shuffle}>Shuffle</Button>
           </Row>
-          <Row>
-            <Button bsStyle="primary" className="center" onClick={this.lucky}>I'm feeling lucky</Button>
+          <Row className="center">
+            <Button bsStyle="primary" onClick={this.lucky}>I'm feeling lucky</Button>
+          </Row>
+          <Row className="center">
+            <Button bsStyle="primary" onClick={this.submit}>Submit</Button>
           </Row>
         </Col>
       </Row>

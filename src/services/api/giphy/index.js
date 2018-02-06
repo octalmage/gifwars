@@ -8,8 +8,8 @@ class GiphyClient {
     this.searchPhrase = searchPhrase
   }
 
-  shuffle() {
-    return this.gifs[Math.floor(Math.random() * this.gifs.length)];
+  shuffle(gifs) {
+    return gifs[Math.floor(Math.random() * gifs.length)];
   }
 
   retrieve() {
