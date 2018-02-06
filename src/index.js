@@ -7,4 +7,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 
 ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+
+// TODO Service worker disabled for now.
+// registerServiceWorker();
