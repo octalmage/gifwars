@@ -16,7 +16,7 @@ class Start extends Component {
   }
 
   componentDidMount() {
-    new Game().startGame()
+    new Game().createGame()
     .then(response => this.props.history.push(`/stage/${response.roomcode}`));
   }
 

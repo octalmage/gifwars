@@ -7,13 +7,18 @@ export default class Game {
     return `${this.host}${route}`;
   }
 
-  startGame() {
+  createGame() {
     return fetch(this.host, { method: 'post' })
     .then(response => response.json());
   }
 
   joinGame(roomcode, name) {
     return fetch(this.route(`${roomcode}/join`), { body: name, method: 'post' })
+    .then(response => response.json());
+  }
+
+  startGame(roomcode) {
+    return fetch(this.route(`${roomcode}/start`), { method: 'post' })
     .then(response => response.json());
   }
 }
