@@ -3,3 +3,17 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+@media (max-height: 736px) and (max-width: 480px) {
+  body {
+background: url("./images/gifwars_mobile_background.png");
+background-size: 100% auto%;
+background-color: black !important;
+  }
+}
+@media (min-height: 200px) and (min-width: 481px) {
+  body {
+background: url("./images/gifwars_text.png");
+background-size: 100% auto;
+background-color: black !important;
+  }
+}

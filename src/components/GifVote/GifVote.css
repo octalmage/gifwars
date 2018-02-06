@@ -1,0 +1,16 @@
+.vote-box {
+  border: 5px rgba(0,0,0,0) solid;
+  box-sizing: border-box;
+}
+.vote-box > img {
+  left: 50%;
+  padding: 10px;
+  position: relative;
+  transform: translateX(-50%);
+  width: 100%;
+}
+
+.vote-box:hover,
+.vote-box.selected {
+  border: 5px green solid;
+}

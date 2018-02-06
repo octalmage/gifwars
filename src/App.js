@@ -13,7 +13,6 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <hr/>
           <Route exact path="/" component={Home}/>
           <Route path="/join" component={Join}/>
           <Route path="/start" component={Start}/>
