@@ -8,13 +8,11 @@ import Start from './containers/Start';
 import Game from './containers/Game';
 import Stage from './containers/Stage';
 
-
 class App extends Component {
   render() {
     return (
       <Router>
         <div>
-          <hr/>
           <Route exact path="/" component={Home}/>
           <Route path="/join" component={Join}/>
           <Route path="/start" component={Start}/>

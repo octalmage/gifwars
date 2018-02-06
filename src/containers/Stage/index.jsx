@@ -19,6 +19,8 @@ class Stage extends Component {
 
     this.state = {
       players: [],
+      stage: 'waiting',
+      round: 0,
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -36,26 +38,44 @@ class Stage extends Component {
         this.setState({ players });
       });
 
+      const gameRef = firebase.database().ref(`games/${roomcode}`);
+
+      gameRef.on('value', snapshot => {
+        const game = snapshot.val();
+        this.setState({
+          stage: game.stage,
+          round: game.round,
+        });
+      });
   }
 
   render() {
-    const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8]
+    const { stage } = this.state;
+    const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
       <Grid>
         <Row className="show-grid">
-          <Col xs={12} md={12} >
-            <h1 className="App-title">Start a Game</h1>
-
-            <p>Room Code: {this.state.roomcode}</p>
-            <p>
-              Players: <br />
-              {this.state.players.map((player, i) =>
+          <Col xs={12} md={12}>
+            {stage === 'waiting' &&
+            <React.Fragment>
+              <h1 className="App-title">Start a Game</h1>
+              <p>Room Code: {this.state.roomcode}</p>
+              <p>
+                Players: <br />
+                {this.state.players.map((player, i) =>
                 <span key ={player}>
                   <span className= "playerText">{player}</span>
                 <img src = {images[i]} className="playerImage"/>
                 <br />
               </span>)}
-            </p>
+              </p>
+            </React.Fragment>
+          }
+          {stage === 'picking' &&
+          <React.Fragment>
+            Answer the prompts on your device.
+          </React.Fragment>
+          }
           </Col>
         </Row>
       </Grid>

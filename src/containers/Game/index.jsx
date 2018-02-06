@@ -7,6 +7,7 @@ import { Button } from 'react-bootstrap';
 import background from './images/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif';
 import firebase from '../../services/Firebase';
 import GameAPI from '../../services/Game';
+import GifVote from '../../components/GifVote';
 
 class Game extends React.Component {
   constructor(props, context) {
@@ -20,7 +21,33 @@ class Game extends React.Component {
       id: 1,
       expire: (new Date()).getTime() + 30000,
       round: 1,
-      prompt: 'trains',
+      rounds: [
+        {
+          prompt: 'trains',
+          users: [
+            {
+              game: "IRBT",
+              gif: {
+                gif: 'asdf',
+                src: "https://media0.giphy.com/media/3o85xnoIXebk3xYx4Q/giphy.gif"
+              },
+              player: "Tom",
+              prompt: 'trains',
+              round: 1
+            },
+            {
+              game: "IRBT",
+              gif: {
+                gif: 'asdf1',
+                src: "https://media2.giphy.com/media/qYGxNHTsCX2Qo/giphy.gif"
+              },
+              player: "John",
+              prompt: 'trains',
+              round: 1
+            }
+          ]
+        }
+      ],
       stage: 'waiting',
     }
   }
@@ -52,7 +79,17 @@ class Game extends React.Component {
             </Row>
           </React.Fragment>
         }
-        {!stage === 'waiting' &&
+        {stage === 'voting' &&
+          <React.Fragment>
+            <Row className="center">
+              <h1> {'Voting in ' + this.state.game.id + ' on Round ' + this.state.game.round } </h1>
+            </Row>
+            <Row>
+              <GifVote user={this.state.user} round={this.state.game.rounds[this.state.game.rounds.length - 1]}/>
+            </Row>
+          </React.Fragment>
+        }
+        {stage === 'waiting' &&
           <React.Fragment>
             Waiting for other players.
             <br />
