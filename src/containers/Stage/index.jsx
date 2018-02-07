@@ -187,7 +187,7 @@ class Stage extends Component {
               <h1>Scores</h1>
               {this.calculateScores(allMoves)}</div>
           }
-          {timer != 0 &&
+          {(timer && timer != 0) &&
             <h2>Time left: {timer}</h2>
           }
           </Col>

@@ -4,6 +4,7 @@ const app = express();
 const admin = require('firebase-admin');
 const values = require('object.values');
 const cors = require('cors')({ origin: true });
+const fs = require('fs');
 
 const { isOdd, makeid } = require('./src/Utils');
 
@@ -182,25 +183,25 @@ const startRound = (roomcode, round) => {
 };
 
 const generateMoves = ({ players, round, roomcode, roomKey }) => {
-  // TODO: Generate prompt.
-  const prompt = prompts[0];
+  const pairs = Math.ceil(players.length / 2);
+  const prompts = getPrompts(pairs);
   let pair_id = 1;
   for (let x = 0; x < players.length; x += 2) {
     addMove({
       round,
       roomcode,
-      prompt,
       roomKey,
       pair_id,
       player: players[x],
+      prompt: prompts[pair_id-1],
     });
     addMove({
       round,
       roomcode,
-      prompt,
       roomKey,
       pair_id,
       player: players[x+1],
+      prompt: prompts[pair_id-1],
     });
 
     pair_id++;
@@ -210,19 +211,19 @@ const generateMoves = ({ players, round, roomcode, roomKey }) => {
     addMove({
       round,
       roomcode,
-      prompt,
       roomKey,
       pair_id,
       player: players[players.length],
+      prompt: prompts[pair_id-1],
     });
 
     addMove({
       round,
       roomcode,
-      prompt,
       roomKey,
       pair_id,
       player: players[0],
+      prompt: prompts[pair_id-1],
     });
   }
 };
@@ -252,3 +253,17 @@ const generateMove = ({ round, roomcode, player, prompt, pair_id }) => ({
   gif: '',
   votes: [],
 });
+
+const getPrompts = (count) => {
+  let contents = fs.readFileSync('./prompts/work.txt', 'utf8');
+  /*console.log(contents);**/
+  var prompts = contents.split("\n")
+  var finalprompts = []
+  for (var i = 0; i<count; i++) {
+    var random = Math.floor(Math.random()*prompts.length)
+    var prompt = prompts[random];
+    finalprompts.push(prompt);
+    prompts.slice(random, 1);
+  }
+  return finalprompts;
+}
