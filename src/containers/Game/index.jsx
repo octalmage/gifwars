@@ -12,6 +12,7 @@ class Game extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {};
+    this.state.userTotal = 0;
     this.state.user = {
       name: props.location.state ? props.location.state.name : 'asdf'
     };
@@ -78,7 +79,6 @@ class Game extends React.Component {
   }
 
   calcUserTotal() {
-    console.log('calc total');
     let total = this.state.userTotal ? this.state.userTotal : 0;
     total += this.state.myMove && this.state.myMove.vote ? Object.values(this.state.myMove.vote).length : 0
     this.setState({

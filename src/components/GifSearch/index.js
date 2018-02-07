@@ -73,7 +73,6 @@ class GifSearch extends React.Component {
 
   submit() {
     try {
-      console.log(this.state.gif);
       this.firebase.ref(`moves/${this.props.move.id}`).update({gif: this.state.gif});
     }
     catch(e) {
@@ -93,8 +92,6 @@ class GifSearch extends React.Component {
     );
     this.client.lucky(nsfw).then(
       (response) => {
-        console.log('lucky');
-        console.log(response);
         this.setState({
           gif: {
             gif: response.data.images.id,

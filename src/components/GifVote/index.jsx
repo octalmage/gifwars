@@ -58,8 +58,6 @@ class GifVote extends React.Component {
     const currentPairId = this.props.pair;
     const currentPair = moves.filter( move => move.pair_id === currentPairId);
     if (currentPair.length === 2) {
-      console.log('set currentpair');
-      console.log(currentPair);
       this.setTimer(currentPair[0].game)
       this.setState({
         currentPair: currentPair
@@ -100,17 +98,15 @@ class GifVote extends React.Component {
               (move, key) => {
                 let setPickedMove = this.setMove.bind(this, move);
                 return (
-                  <Col key={key} xs={12} md={5} className={'vote-box ' + (this.state.pickedMove.id === move.id ? 'selected' : '')} onClick={setPickedMove}>
+                  <Col key={key} xs={12} md={4} className={'vote-box ' + (this.state.pickedMove.id === move.id ? 'selected' : '')} onClick={setPickedMove}>
                     <div className="center">{move.player}</div>
                     <img src={move.gif.src} alt={move.gif.gif} />
                   </Col>
                 );
               }
             )}
-            <Col xs={12} md={1} className="center">
+            <Col xs={12} md={4} className="center vote-button">
               <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.submit}>Vote</Button>
-            </Col>
-            <Col xs={12} md={1} className="center">
               <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.randomWinner}>Make my mind for me</Button>
             </Col>
           </Row>
