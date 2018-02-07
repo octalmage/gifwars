@@ -1,6 +1,6 @@
 import React from 'react';
 import './GifSearch.css';
-import {Row, Col, Button} from 'react-bootstrap';
+import {Row, Col, Button, FormControl} from 'react-bootstrap';
 
 import GifBox from '../GifBox';
 import firebase from '../../services/Firebase';
@@ -10,25 +10,26 @@ class GifSearch extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      gif: {}
+      gif: {},
+      search: props.move.prompt,
     };
+
     this.firebase = firebase.database();
     this.shuffle = this.shuffle.bind(this);
     this.lucky = this.lucky.bind(this);
+    this.updateSearch = this.updateSearch.bind(this);
+    this.search = this.search.bind(this);
     this.gifs = [];
     this.submit = this.submit.bind(this);
     this.state.countdown = 0;
     this.loading = false;
-  }
+    this.client = new GiphyClient(props.move.prompt);
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.move && (nextProps.move !== this.props.move)) {
-      this.client = new GiphyClient(nextProps.move.prompt);
-      if (this.gifs.length === 0) {
-        this.buildList();
-      }
+    if (this.gifs.length === 0) {
+      this.buildList();
     }
   }
+
 
   buildList() {
     if (!this.loading) {
@@ -104,6 +105,18 @@ class GifSearch extends React.Component {
     )
   }
 
+  updateSearch(e) {
+    this.setState({
+      search: e.target.value,
+    });
+  }
+
+  search() {
+    this.gifs = [];
+    this.client = new GiphyClient(this.state.search);
+    this.buildList();
+  }
+
   render() {
     return (
       <Row>
@@ -111,6 +124,21 @@ class GifSearch extends React.Component {
           <h2>{ this.state.countdown } seconds remaining</h2>
         </Col>
         <Col md={7} xs={12} className="gif-search-box">
+          <Row>
+            <FormControl
+              type="text"
+              value={this.state.search}
+              onChange={this.updateSearch}
+            />
+            <Button
+              className="gif-search-buttons"
+              bsStyle="info"
+              bsSize="small"
+              onClick={this.search}
+            >
+              Search
+            </Button>
+          </Row>
           <Row>
             <div className="big-gif"><img alt="" src={this.state.gif.og_src} /></div>
           </Row>

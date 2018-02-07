@@ -94,7 +94,7 @@ class Game extends React.Component {
               <h1> {this.state.user.name + ' in ' + this.state.id + ' on Round ' + this.state.round } </h1>
             </Row>
             <Row>
-              <GifSearch user={this.state.user} move={this.state.myMove}/>
+              {this.state.myMove && <GifSearch user={this.state.user} move={this.state.myMove}/>}
             </Row>
           </React.Fragment>
         }
