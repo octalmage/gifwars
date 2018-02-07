@@ -40,7 +40,7 @@ class Game extends React.Component {
             Object.values(round).map(
               (move) => {
                 const moveRef = firebase.database().ref(`moves/${move}`);
-                moveRef.once('value', (snapshot) => {
+                return moveRef.once('value', (snapshot) => {
                   let moveBig = snapshot.val();
                   moveBig.id = move;
                   this.moveUpdate(moveBig);
@@ -56,7 +56,8 @@ class Game extends React.Component {
   moveUpdate(move) {
     let currentMoves = this.state.currentMoves;
     let moveBuffer = [];
-    if (move.player === this.state.user.name) {
+    if (move.player === this.state.user.name && move.round === this.state.round) {
+      this.calcUserTotal();
       this.setState({
         myMove: move
       });
@@ -70,6 +71,15 @@ class Game extends React.Component {
         currentMoves: moveBuffer
       }
     );
+  }
+
+  calcUserTotal() {
+    const allMyMoves = this.state.currentMoves.filter(move => move.player === this.state.user.name);
+    let total = 0;
+    allMyMoves.forEach(move => total += move.vote ? move.vote.length : 0);
+    this.setState({
+      userTotal: total
+    });
   }
 
   render() {
@@ -111,10 +121,20 @@ class Game extends React.Component {
             </Button>
           </React.Fragment>
         }
-        <Row>
-          <br />
-          <img src={background} />
-        </Row>
+        {stage === 'score' && this.state.myMove &&
+          <React.Fragment>
+            <Row className="center">
+              <h1> {'Score for ' + this.state.user.name + ' in Room '+ this.state.id + ' on Round ' + this.state.round } </h1>
+            </Row>
+            <Row>
+              <div className="big-gif"><img alt="" src={this.state.myMove.gif.og_src} /></div>
+            </Row>
+            <Row className="center">
+              <h1>Round {this.state.round}: {this.state.myMove.vote ? Object.values(this.state.myMove.vote).length : 0} </h1>
+              <h1>Total: {this.state.userTotal}</h1>
+            </Row>
+          </React.Fragment>
+        }
       </Grid>
     );
   }

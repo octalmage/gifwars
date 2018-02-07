@@ -12,7 +12,7 @@ class GifSearch extends React.Component {
     this.state = {
       gif: {}
     };
-
+    this.firebase = firebase.database();
     this.shuffle = this.shuffle.bind(this);
     this.lucky = this.lucky.bind(this);
     this.gifs = [];
@@ -23,7 +23,6 @@ class GifSearch extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.move && (nextProps.move !== this.props.move)) {
-      console.log(nextProps);
       this.client = new GiphyClient(nextProps.move.prompt);
       if (this.gifs.length === 0) {
         this.buildList();
@@ -73,7 +72,12 @@ class GifSearch extends React.Component {
   }
 
   submit() {
-    firebase.database().ref(`moves/${this.props.move.id}`).update({gif: this.state.gif});
+    try {
+      this.firebase.ref(`moves/${this.props.move.id}`).update({gif: this.state.gif});
+    }
+    catch(e) {
+
+    }
   }
 
   shuffle() {
@@ -108,7 +112,7 @@ class GifSearch extends React.Component {
         </Col>
         <Col md={7} xs={12} className="gif-search-box">
           <Row>
-            <div className="big-gif"><img src={this.state.gif.og_src} /></div>
+            <div className="big-gif"><img alt="" src={this.state.gif.og_src} /></div>
           </Row>
           <Row>
             {this.gifs.map(
