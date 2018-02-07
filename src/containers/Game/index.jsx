@@ -30,7 +30,8 @@ class Game extends React.Component {
         round: game.round,
         rounds: game.rounds,
         currentRound: [],
-        pairId: game.pair_id
+        pairId: game.pair_id,
+        votingStage: game.voting_stage
       });
       if (game.rounds) {
         const roundRef = firebase.database().ref(`rounds/${game.rounds[game.round]}`);
@@ -96,13 +97,23 @@ class Game extends React.Component {
             </Row>
           </React.Fragment>
         }
-        {stage === 'voting' &&
+        {stage === 'voting' && this.state.votingStage === 'voting' &&
           <React.Fragment>
             <Row className="center">
               <h1> {'Voting in ' + this.state.id + ' on Round ' + this.state.round } </h1>
             </Row>
             <Row>
               <GifVote user={this.state.user} pair={this.state.pairId} moves={this.state.currentMoves}/>
+            </Row>
+          </React.Fragment>
+        }
+        {stage === 'voting' && this.state.votingStage === 'score' &&
+          <React.Fragment>
+            <Row className="center">
+              <h1> {'Voting in ' + this.state.id + ' on Round ' + this.state.round } </h1>
+            </Row>
+            <Row>
+              <h1>Results are show on the main stage!</h1>
             </Row>
           </React.Fragment>
         }
