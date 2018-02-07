@@ -25,6 +25,7 @@ class Stage extends Component {
       pair_id: 1,
       rounds: [],
       moves: [],
+      allMoves: [],
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -38,7 +39,7 @@ class Stage extends Component {
 
       gameRef.on('value', snapshot => {
         const game = snapshot.val();
-        console.log(game);
+
         this.setState({
           stage: game.stage,
           round: game.round,
@@ -49,30 +50,49 @@ class Stage extends Component {
         });
 
         if (game.rounds) {
-          const roundRef = firebase.database().ref(`rounds/${game.rounds[game.round]}`);
-          roundRef.on('value', (snapshot) => {
-            const round = snapshot.val();
-            if (round) {
-              let getMoves = Object.values(round).map(move => {
-                return firebase.database().ref(`moves/${move}`).once('value').then(snapshot => snapshot.val());
-              });
+          this.getMovesForRound(game.rounds[game.round])
+          .then(moves => {
+            const filteredMoves = moves.filter(move => move.pair_id === game.pair_id);
+            this.setState({
+              moves: filteredMoves,
+            });
+          })
+        }
 
-              Promise.all(getMoves).then(moves => {
-                const filteredMoves = moves.filter(move => move.pair_id === game.pair_id);
-                console.log(filteredMoves);
-                this.setState({ moves: filteredMoves });
-              });
-            }
+        const getRounds = [];
+        for (let x = 1; x <= 3; x++) {
+          getRounds.push(this.getMovesForRound(game.rounds[x]));
+        }
 
+        Promise.all(getRounds).then(allMoves => {
+          const flattened = [].concat.apply([], allMoves);
+          this.setState({ allMoves: flattened });
+        });
+      });
+  }
+
+  getMovesForRound(round) {
+    const roundRef = firebase.database().ref(`rounds/${round}`);
+    return new Promise(resolve => {
+      roundRef.once('value', snapshot => {
+        const round = snapshot.val();
+        if (round) {
+          let getMoves = Object.values(round).map(move => {
+            return firebase.database().ref(`moves/${move}`).once('value').then(snapshot => snapshot.val());
           });
+
+          return resolve(Promise.all(getMoves));
+        } else {
+          return resolve([]);
         }
       });
+    });
   }
 
   getWinner(moves) {
     const scores = moves.map(move => {
       const newMove = {...move};
-      newMove['score'] = Object.values(move.vote).length;
+      newMove['score'] = move.vote ? Object.values(move.vote).length : 0;
       return newMove;
     });
 
@@ -83,8 +103,20 @@ class Stage extends Component {
     }
   }
 
+  calculateScores(moves) {
+    const scores = moves.map(move => {
+      const newMove = {...move};
+      newMove['score'] = move.vote ? Object.values(move.vote).length : 0;
+      return newMove;
+    });
+
+    scores.sort((a, b) => b.score - a.score);
+
+    return scores.map(score => <span>{score.player}: {score.score}<br /></span>)
+  }
+
   render() {
-    const { stage, voting_stage, moves } = this.state;
+    const { stage, voting_stage, moves, allMoves } = this.state;
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
       <Grid>
@@ -106,9 +138,9 @@ class Stage extends Component {
             </React.Fragment>
           }
           {stage === 'picking' &&
-          <React.Fragment>
+          <h1>
             Answer the prompts on your device.
-          </React.Fragment>
+          </h1>
           }
           {stage === 'voting' &&
           <React.Fragment>
@@ -133,6 +165,11 @@ class Stage extends Component {
               </p>
             }
           </React.Fragment>
+          }
+          {stage === 'score' &&
+            <div>
+              <h1>Scores</h1>
+              {this.calculateScores(allMoves)}</div>
           }
           </Col>
         </Row>
