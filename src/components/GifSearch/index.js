@@ -3,6 +3,7 @@ import './GifSearch.css';
 import {Row, Col, Button} from 'react-bootstrap';
 
 import GifBox from '../GifBox';
+import firebase from '../../services/Firebase';
 import GiphyClient from '../../services/api/giphy';
 
 class GifSearch extends React.Component {
@@ -11,60 +12,55 @@ class GifSearch extends React.Component {
     this.state = {
       gif: {}
     };
-    this.client = new GiphyClient(this.props.game.round.prompt);
+
     this.shuffle = this.shuffle.bind(this);
     this.lucky = this.lucky.bind(this);
     this.gifs = [];
     this.submit = this.submit.bind(this);
-    this.buildList();
     this.state.countdown = 0;
+    this.loading = false;
   }
 
-  componentDidMount() {
-    this.setState({search: this.props.prompt});
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.move && (nextProps.move !== this.props.move)) {
+      console.log(nextProps);
+      this.client = new GiphyClient(nextProps.move.prompt);
+      if (this.gifs.length === 0) {
+        this.buildList();
+      }
+    }
   }
 
   buildList() {
-    this.client.retrieve().then(
-      (response) => {
-        response.data.forEach((gifObject) => {
-          this.gifs.push(this.client.convert(gifObject));
-        });
-        this.setupTimer();
-        this.setState(
-          {
-            gifs: this.gifs
-          }
-        );
-      }
-    )
-  }
-
-  updateTime() {
-    //cloud function for time
-    return (new Date()).getTime();
+    if (!this.loading) {
+      this.loading = true;
+      this.client.retrieve().then(
+        (response) => {
+          response.data.forEach((gifObject) => {
+            this.gifs.push(this.client.convert(gifObject));
+          });
+          this.setupTimer();
+          this.setState(
+            {
+              gifs: this.gifs
+            }
+          );
+          this.loading = false;
+        }
+      );
+    }
   }
 
   setupTimer() {
-    this.state.currentTime = this.updateTime();
-    this.state.countdown = Math.round((this.props.game.expire - this.updateTime())/1000);
-    this.timerInterval = setInterval(
-      () => {
-        if (this.props.game.expire < this.state.currentTime) {
-          this.setState(
-            {currentTime: this.updateTime(),
-            countdown: 0}
-          );
-          //submit current gif in state
-          clearInterval(this.timerInterval);
-          return;
-        }
-        this.setState(
-          {currentTime: this.updateTime(),
-          countdown: Math.round((this.props.game.expire - this.updateTime())/1000)}
-        );
-      }, 500
-    );
+    const roomcode = this.props.move.game
+    const gameRef = firebase.database().ref(`games/${roomcode}`);
+
+    gameRef.on('value', (snapshot) => {
+      const game = snapshot.val();
+      this.setState({
+        countdown: game.timer
+      });
+    });
   }
 
 
@@ -77,7 +73,7 @@ class GifSearch extends React.Component {
   }
 
   submit() {
-    // send up this.state.gif to the server as the selected gif
+    this.firebase.ref(`moves/${this.props.move.id}`).update({gif: this.state.gif});
   }
 
   shuffle() {
