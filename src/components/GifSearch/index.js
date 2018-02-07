@@ -22,8 +22,7 @@ class GifSearch extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-    if (nextProps.move) {
+    if (nextProps.move && (nextProps.move !== this.props.move)) {
       console.log(nextProps);
       this.client = new GiphyClient(nextProps.move.prompt);
       if (this.gifs.length === 0) {

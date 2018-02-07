@@ -64,7 +64,6 @@ class Game extends React.Component {
     if (currentMoves.length > 0 && move !== undefined) {
       moveBuffer = this.state.currentMoves.filter( currentMove => currentMove.id !== move.id );
     }
-    console.log(moveBuffer);
     moveBuffer.push(move);
     this.setState(
       {
