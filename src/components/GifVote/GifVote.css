@@ -14,3 +14,7 @@
 .vote-box.selected {
   border: 5px green solid;
 }
+
+.vote-button > button {
+  margin: 15px;
+}

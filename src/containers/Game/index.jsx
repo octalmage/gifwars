@@ -12,6 +12,7 @@ class Game extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {};
+    this.state.userTotal = 0;
     this.state.user = {
       name: props.location.state ? props.location.state.name : 'asdf'
     };
@@ -24,6 +25,9 @@ class Game extends React.Component {
 
     gameRef.on('value', (snapshot) => {
       const game = snapshot.val();
+      if ((game.round === this.state.round + 1)) {
+        this.calcUserTotal();
+      }
       this.setState({
         stage: game.stage,
         id: roomcode,
@@ -59,7 +63,6 @@ class Game extends React.Component {
     let currentMoves = this.state.currentMoves;
     let moveBuffer = [];
     if (move.player === this.state.user.name && move.round === this.state.round) {
-      this.calcUserTotal();
       this.setState({
         myMove: move
       });
@@ -76,9 +79,8 @@ class Game extends React.Component {
   }
 
   calcUserTotal() {
-    const allMyMoves = this.state.currentMoves.filter(move => move.player === this.state.user.name);
-    let total = 0;
-    allMyMoves.forEach(move => total += move.vote ? move.vote.length : 0);
+    let total = this.state.userTotal ? this.state.userTotal : 0;
+    total += this.state.myMove && this.state.myMove.vote ? Object.values(this.state.myMove.vote).length : 0
     this.setState({
       userTotal: total
     });
@@ -114,7 +116,7 @@ class Game extends React.Component {
               <h1> {'Voting in ' + this.state.id + ' on Round ' + this.state.round } </h1>
             </Row>
             <Row>
-              <h1>Results are show on the main stage!</h1>
+              <h1>Results are being tallied up on the main stage!</h1>
             </Row>
           </React.Fragment>
         }
@@ -143,7 +145,7 @@ class Game extends React.Component {
             </Row>
             <Row className="center">
               <h1>Round {this.state.round}: {this.state.myMove.vote ? Object.values(this.state.myMove.vote).length : 0} </h1>
-              <h1>Total: {this.state.userTotal}</h1>
+              <h1>Total: {this.state.userTotal + (this.state.myMove.vote ? Object.values(this.state.myMove.vote).length : 0)}</h1>
             </Row>
           </React.Fragment>
         }

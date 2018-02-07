@@ -95,7 +95,7 @@ class GifSearch extends React.Component {
       (response) => {
         this.setState({
           gif: {
-            gif: response.data.idea,
+            gif: response.data.images.id,
             src: response.data.images.fixed_width_downsampled.gif_url,
             og_src: response.data.images.original.gif_url
           },
@@ -124,6 +124,11 @@ class GifSearch extends React.Component {
           <h2>{ this.state.countdown } seconds remaining</h2>
         </Col>
         <Col md={7} xs={12} className="gif-search-box">
+        <Row className="center">
+          {this.props.move &&
+            <h2>Prompt: "{this.props.move.prompt}"</h2>
+          }
+        </Row>
           <Row>
             <FormControl
               type="text"
