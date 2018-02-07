@@ -31,6 +31,7 @@ app.post('/:id/start', (request, response) => {
   startGame(roomcode);
 });
 
+exports.games = functions.https.onRequest(app);
 
 exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
     .onWrite(event => {
@@ -41,22 +42,31 @@ exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
       .once('value')
       .then(snapshot => snapshot.val())
       .then(round => {
-        let newStage = 'done';
-        let timer = 10;
+
+        if (!round || !stage) {
+          return;
+        }
+
+        if (round === 3 && stage === 'score') {
+          return;
+        }
+
+        let newStage = '';
+        let timer = 30;
 
         if (stage === 'waiting') {
           return;
         } else if (stage === 'picking') {
           newStage = 'voting';
         } else if (stage === 'voting') {
-          newStage = 'score';
+          return admin.database().ref(`/games/${roomcode}`)
+          .update({
+            pair_id: 1,
+            voting_stage: 'voting',
+          });
         } else if (stage === 'score') {
           newStage = 'picking';
           round += 1;
-        }
-
-        if (round === 3 && stage === 'score') {
-          return;
         }
 
         return startTimer(roomcode, timer)
@@ -64,8 +74,55 @@ exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
       });
     });
 
-exports.games = functions.https.onRequest(app);
+exports.gameVoting = functions.database.ref('/games/{roomcode}/voting_stage')
+  .onWrite(event => {
+    const voting_stage = event.data.val();
+    const roomcode = event.params.roomcode;
+    return startTimer(roomcode, 15)
+    .then(() => {
+      return Promise.all([getPairCount(roomcode), getPairId(roomcode)])
+      .then(result => {
+        let [count, pair_id] = result;
+        if (voting_stage === 'voting') {
+          return admin.database().ref(`/games/${roomcode}`).update({ voting_stage: 'score' });
+        }
+        else if (pair_id < count && voting_stage === 'score') {
+          pair_id = parseInt(pair_id) + 1;
+          return admin.database().ref(`/games/${roomcode}`).update({ pair_id, voting_stage: 'voting' });
+        } else {
+          return updateValue(`/games/${roomcode}`, { stage: 'score' });
+        }
+      })
+    });
+  });
 
+const getVotingStage = roomcode => getValue(`/games/${roomcode}/voting_stage`);
+const getPairId = roomcode => getValue(`/games/${roomcode}/pair_id`);
+const getPlayers = roomcode => getValues(`/games/${roomcode}/players`);
+const getRound = roomcode => getValue(`/games/${roomcode}/round`);
+
+const getValue = path =>
+  admin.database()
+  .ref(path)
+  .once('value')
+  .then(snapshot =>
+    snapshot.val())
+
+const getValues = path =>
+  admin.database()
+  .ref(path)
+  .once('value')
+  .then(snapshot =>
+    values(snapshot.val()))
+
+const updateValue = (path, value) =>
+  admin.database().ref(path).update(value)
+
+const setValue = (path, value) =>
+  admin.database().ref(path).set(value)
+
+const getPairCount = roomcode => getPlayers(roomcode)
+.then(players => Math.ceil(players.length / 2));
 
 const startTimer = (roomcode, time) => [...Array(time+1)].reduce( (p, _, i) =>
 p.then(_ => new Promise(resolve =>
@@ -98,49 +155,54 @@ const createGame = (owner) => {
 
 const joinGame = (roomcode, player) => admin.database().ref(`/games/${roomcode}/players`).push(player);
 
-const startGame = (roomcode) => {
+const startGame = roomcode => {
+  return startRound(roomcode, 1)
+  .then(() => startRound(roomcode, 2))
+  .then(() => startRound(roomcode, 3))
+};
+
+const startRound = (roomcode, round) => {
   return new Promise((resolve) => {
     return admin.database().ref(`/games/${roomcode}`).update({
-      round: 1,
+      round: round,
       stage: 'picking',
     }).then(resolve);
   })
   .then(() => {
     const roomKey = admin.database().ref('/rounds').push();
-    const getRoomKey = admin.database().ref(`/games/${roomcode}/rounds/1`).set(roomKey.key).then(() => roomKey.key);
+    const getRoomKey = admin.database().ref(`/games/${roomcode}/rounds/${round}`).set(roomKey.key).then(() => roomKey.key);
 
-    const getPlayers = admin.database().ref(`/games/${roomcode}/players`).once('value').then((snapshot) => {
-      return values(snapshot.val());
-    });
-
-    return Promise.all([getRoomKey, getPlayers]);
+    return Promise.all([getRoomKey, getPlayers(roomcode)]);
   })
   .then(result => {
     const [roomKey, players] = result;
-    return generateMoves({ players, roomcode, round: 1, roomKey });
+    return generateMoves({ players, roomcode, round: round, roomKey });
   });
 };
 
 const generateMoves = ({ players, round, roomcode, roomKey }) => {
   // TODO: Generate prompt.
   const prompt = prompts[0];
+  let pair_id = 1;
   for (let x = 0; x <= players.length; x += 2) {
     addMove({
       round,
       roomcode,
       prompt,
       roomKey,
+      pair_id,
       player: players[x],
-      pair_id: 1,
     });
     addMove({
       round,
       roomcode,
       prompt,
       roomKey,
+      pair_id,
       player: players[x+1],
-      pair_id: 1,
     });
+
+    pair_id++;
   }
 
   if (isOdd(players.length)) {
@@ -149,7 +211,8 @@ const generateMoves = ({ players, round, roomcode, roomKey }) => {
       roomcode,
       prompt,
       roomKey,
-      player: players[players.length]
+      pair_id,
+      player: players[players.length],
     });
 
     addMove({
@@ -157,20 +220,21 @@ const generateMoves = ({ players, round, roomcode, roomKey }) => {
       roomcode,
       prompt,
       roomKey,
-      player: players[0]
+      pair_id,
+      player: players[0],
     });
   }
 };
 
-const addMove = ({ round, roomcode, prompt, player, roomKey}) => {
+const addMove = ({ round, roomcode, prompt, player, roomKey, pair_id }) => {
   return new Promise(resolve => {
-    admin.database().ref('/moves').push(
+    return admin.database().ref('/moves').push(
       generateMove({
         round,
         roomcode,
         prompt,
         player,
-        pair,
+        pair_id,
       })
     )
     // Add the move key to the moves list.
@@ -178,7 +242,8 @@ const addMove = ({ round, roomcode, prompt, player, roomKey}) => {
   });
 };
 
-const generateMove = ({ round, roomcode, player, prompt }) => ({
+const generateMove = ({ round, roomcode, player, prompt, pair_id }) => ({
+  pair_id: pair_id,
   round: round,
   game: roomcode,
   prompt: prompt,
