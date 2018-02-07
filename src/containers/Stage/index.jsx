@@ -26,6 +26,7 @@ class Stage extends Component {
       rounds: [],
       moves: [],
       allMoves: [],
+      timer: 0,
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -47,6 +48,7 @@ class Stage extends Component {
           voting_stage: game.voting_stage,
           rounds: game.rounds ? Object.values(game.rounds) : [],
           pair_id: game.pair_id,
+          timer: game.timer,
         });
 
         if (game.rounds) {
@@ -126,11 +128,11 @@ class Stage extends Component {
 
     groupedScores.sort((a, b) => b.score - a.score);
 
-    return groupedScores.map(score => <span>{score.player}: {score.score}<br /></span>)
+    return groupedScores.map(score => <h3>{score.player}: {score.score}<br /></h3>)
   }
 
   render() {
-    const { stage, voting_stage, moves, allMoves } = this.state;
+    const { stage, voting_stage, moves, allMoves, timer } = this.state;
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
       <Grid>
@@ -184,6 +186,9 @@ class Stage extends Component {
             <div>
               <h1>Scores</h1>
               {this.calculateScores(allMoves)}</div>
+          }
+          {timer != 0 &&
+            <h2>Time left: {timer}</h2>
           }
           </Col>
         </Row>
