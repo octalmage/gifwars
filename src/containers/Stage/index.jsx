@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
 import Game from '../../services/Game';
+import MoveDisplay from '../../components/MoveDisplay';
 import firebase from '../../services/Firebase';
 import avatar8 from '../../images/dino_thumb.png';
 import avatar1 from '../../images/crabby_thumb.png'
@@ -164,10 +165,7 @@ class Stage extends Component {
           }
           {stage === 'voting' &&
           <React.Fragment>
-
             <h1>{moves[0] && moves[0].prompt}</h1>
-
-
             {voting_stage === 'score' &&
               <React.Fragment>
                 <h1>{this.getWinner(moves)} is the winner!</h1>
@@ -176,16 +174,20 @@ class Stage extends Component {
             <Row className="show-grid">
               { moves[0] && moves[0].gif &&
                 <Col xs={6} md={6}>
-                  <img src={moves[0].gif.og_src} style={{ maxHeight: '400px'}} />
-                  <center><h2>{moves[0].player}</h2></center>
-                  Votes: {moves[0].vote ? Object.values(moves[0].vote).map(vote => <span>{vote}{' '}</span>) : null}
+                  <MoveDisplay
+                    votes={moves[0].vote}
+                    player={moves[0].player}
+                    gif={moves[0].gif}
+                  />
                 </Col>
               }
               { moves[1] && moves[1].gif &&
                 <Col xs={6} md={6}>
-                  <img src={moves[1].gif.og_src} />
-                  <center><h2>{moves[1].player}</h2></center>
-                  Votes: {moves[1].vote && Object.values(moves[1].vote).map(vote => <span>{vote}{' '}</span>)}
+                  <MoveDisplay
+                    votes={moves[1].vote}
+                    player={moves[1].player}
+                    gif={moves[1].gif}
+                  />
                 </Col>
               }
             </Row>
