@@ -1,7 +1,8 @@
 import React from 'react';
-import './GifVote.css';
+import firebase from '../../services/Firebase';
 import {Row, Col, Button} from 'react-bootstrap';
-import FirebaseHelper from '../../helper/FirebaseHelper';
+
+import './GifVote.css';
 
 class GifVote extends React.Component {
   /*
@@ -16,62 +17,71 @@ class GifVote extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {};
-    this.state.pickedGif = {}
-    this.state.expireTime = (new Date()).getTime() + 15 * 1000;
-    this.state.coundown = 0;
+    this.state.pickedGif = {};
+    this.firebase = firebase.database();
+    this.state.pickedMove = {};
     this.submit = this.submit.bind(this);
     this.randomWinner = this.randomWinner.bind(this);
-    this.state.currentPair = [
-      (new FirebaseHelper()).emptyMove(),
-      (new FirebaseHelper()).emptyMove()
-    ]
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.moves.length > 1) {
+    if (nextProps.moves.length > 1 && nextProps.moves.length !== this.props.moves.length) {
       this.getPair(nextProps.moves);
     }
   }
 
   submit() {
-    /* submit users vote */
+    this.setState(
+      {
+        submitted: true
+      }
+    );
+    this.firebase.ref(`moves/${this.state.pickedMove.id}/vote`).push(this.props.user.name);
   }
 
   randomWinner() {
-    let randomGif = this.props.currentPair[Math.round(Math.random()*1)].gif;
-    this.setGif(randomGif);
+    let randomMove = this.props.currentPair[Math.round(Math.random()*1)];
+    this.setMove(randomMove);
     this.submit();
   }
 
   getPair(moves) {
-    //update voting to handle pairs
-    // const currentPairId = this.props.pair;
-    // const currentPair = this.props.moves.map(
-    //   (move) => {
-    //     if (move.pair_id === currentPairId) {
-    //       return move;
-    //     }
-    //   }
-    // );
-    // Use props.pair to compare against pair ids
-    const currentPair = [
-      moves[0],
-      moves[1]
-    ]
-    this.setState({
-      currentPair: currentPair
+    const currentPairId = this.props.pair;
+    const currentPair = moves.map(
+      (move) => {
+        if (move.pair_id === currentPairId) {
+          return move;
+        }
+      }
+    );
+    if (currentPair.length === 2) {
+      this.setTimer(currentPair[0].game)
+      this.setState({
+        currentPair: currentPair
+      });
+    }
+  }
+
+  setTimer(code) {
+    const gameRef = firebase.database().ref(`games/${code}`);
+
+    gameRef.on('value', (snapshot) => {
+      const game = snapshot.val();
+      this.setState({
+        countdown: game.timer
+      });
     });
   }
 
-  setGif(gif) {
+  setMove(move) {
     this.setState(
-      {pickedGif: gif}
+      {pickedMove: move}
     );
   }
 
   render() {
-    return (
-      <div className="gif-vote">
+    const pair = this.state.currentPair && this.state.currentPair.length > 1 ? (
+      <React.Fragment>
         <Row className="center">
           <h2>Prompt: "{this.state.currentPair[0].prompt}"</h2>
         </Row>
@@ -80,23 +90,28 @@ class GifVote extends React.Component {
         </Row>
         <Row>
           {this.state.currentPair.map(
-            (user, key) => {
-              let setPickedGif = this.setGif.bind(this, user.gif, key)
+            (move, key) => {
+              let setPickedMove = this.setMove.bind(this, move);
               return (
-                <Col key={key} xs={12} md={5} className={'vote-box ' + (this.state.pickedGif.gif === user.gif.gif ? 'selected' : '')} onClick={setPickedGif}>
-                  <div className="center">{user.player}</div>
-                  <img src={user.gif.src} alt={user.gif.gif} />
+                <Col key={key} xs={12} md={5} className={'vote-box ' + (this.state.pickedMove.id === move.id ? 'selected' : '')} onClick={setPickedMove}>
+                  <div className="center">{move.player}</div>
+                  <img src={move.gif.src} alt={move.gif.gif} />
                 </Col>
               );
             }
           )}
           <Col xs={12} md={1} className="center">
-            <Button bsSize="large" bsStyle="primary" onClick={this.submit}>Vote</Button>
+            <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.submit}>Vote</Button>
           </Col>
           <Col xs={12} md={1} className="center">
-            <Button bsSize="large" bsStyle="primary" onClick={this.randomWinner}>Make my mind for me</Button>
+            <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.randomWinner}>Make my mind for me</Button>
           </Col>
         </Row>
+      </React.Fragment>
+    ) : '';
+    return (
+      <div className="gif-vote">
+        {pair}
       </div>
     );
   }

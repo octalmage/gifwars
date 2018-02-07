@@ -3,8 +3,8 @@ import './GifSearch.css';
 import {Row, Col, Button} from 'react-bootstrap';
 
 import GifBox from '../GifBox';
+import firebase from '../../services/Firebase';
 import GiphyClient from '../../services/api/giphy';
-import FirebaseHelper from '../../helper/FirebaseHelper';
 
 class GifSearch extends React.Component {
   constructor(props, context) {
@@ -18,12 +18,16 @@ class GifSearch extends React.Component {
     this.gifs = [];
     this.submit = this.submit.bind(this);
     this.state.countdown = 0;
+
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.move) {
-      this.client = new GiphyClient(this.props.move.prompt);
-      this.buildList();
+    if (nextProps.move && (nextProps.move !== this.props.move)) {
+      console.log(nextProps);
+      this.client = new GiphyClient(nextProps.move.prompt);
+      if (this.gifs.length === 0) {
+        this.buildList();
+      }
     }
   }
 
@@ -43,33 +47,16 @@ class GifSearch extends React.Component {
     )
   }
 
-  updateTime() {
-    //cloud function for time
-    return (new Date()).getTime();
-  }
-
   setupTimer() {
-    this.setState({
-      currentTime: this.updateTime(),
-      countdown: Math.round((this.props.game.expire - this.updateTime())/1000)
-    })
-    this.timerInterval = setInterval(
-      () => {
-        if (this.props.game.expire < this.state.currentTime) {
-          this.setState(
-            {currentTime: this.updateTime(),
-            countdown: 0}
-          );
-          //submit current gif in state
-          clearInterval(this.timerInterval);
-          return;
-        }
-        this.setState(
-          {currentTime: this.updateTime(),
-          countdown: Math.round((this.props.game.expire - this.updateTime())/1000)}
-        );
-      }, 500
-    );
+    const roomcode = this.props.move.game
+    const gameRef = firebase.database().ref(`games/${roomcode}`);
+
+    gameRef.on('value', (snapshot) => {
+      const game = snapshot.val();
+      this.setState({
+        countdown: game.timer
+      });
+    });
   }
 
 
@@ -82,8 +69,7 @@ class GifSearch extends React.Component {
   }
 
   submit() {
-    // send up this.state.gif to the server as the selected gif
-    (new FirebaseHelper).submit(this.gif, this.props.user.name)
+    this.firebase.ref(`moves/${this.props.move.id}`).update({gif: this.state.gif});
   }
 
   shuffle() {

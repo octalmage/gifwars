@@ -13,8 +13,8 @@ class Game extends React.Component {
     super(props, context);
     this.state = {};
     this.state.user = {
-      name: 'User1'
-    }
+      name: props.location.state ? props.location.state.name : 'asdf'
+    };
     this.state.currentMoves = [];
   }
 
@@ -61,19 +61,11 @@ class Game extends React.Component {
         myMove: move
       });
     }
-    if (currentMoves.length > 0) {
-      moveBuffer = this.state.currentMoves.map(
-        (currentMove) => {
-          if (currentMove.id === move.id) {
-            return;
-          }
-          return currentMove;
-        }
-      )
+    if (currentMoves.length > 0 && move !== undefined) {
+      moveBuffer = this.state.currentMoves.filter( currentMove => currentMove.id !== move.id );
     }
-    moveBuffer.push(move);
-    console.log('moves');
     console.log(moveBuffer);
+    moveBuffer.push(move);
     this.setState(
       {
         currentMoves: moveBuffer
@@ -101,7 +93,7 @@ class Game extends React.Component {
               <h1> {'Voting in ' + this.state.id + ' on Round ' + this.state.round } </h1>
             </Row>
             <Row>
-              <GifVote user={this.state.user} pair={this.state.paidId} moves={this.state.currentMoves}/>
+              <GifVote user={this.state.user} pair={this.state.pairId} moves={this.state.currentMoves}/>
             </Row>
           </React.Fragment>
         }

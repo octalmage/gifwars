@@ -5,7 +5,6 @@ import Game from '../../services/Game';
 class Join extends React.Component {
   constructor(props, context) {
     super(props, context);
-
     this.handleChange = this.handleChange.bind(this);
     this.joinGame = this.joinGame.bind(this);
     this.state = {
@@ -39,7 +38,7 @@ class Join extends React.Component {
   joinGame() {
     this.game.joinGame(this.state.roomcode, this.state.name)
     .then(response => {
-      this.props.history.push(`/game/${this.state.roomcode}`);
+      this.props.history.push(`/game/${this.state.roomcode}`, {name: this.state.name});
     });
   }
 
