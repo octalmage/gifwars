@@ -65,7 +65,7 @@ class Stage extends Component {
                 {this.state.players.map((player, i) =>
                 <span key ={player}>
                   <span className= "playerText">{player}</span>
-                <img src = {images[i]} className="playerImage"/>
+                <img alt="" src = {images[i]} className="playerImage"/>
                 <br />
               </span>)}
               </p>

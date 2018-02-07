@@ -16,27 +16,35 @@ class GifVote extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = {};
-    this.state.pickedGif = {};
     this.firebase = firebase.database();
-    this.state.pickedMove = {};
     this.submit = this.submit.bind(this);
     this.randomWinner = this.randomWinner.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.moves.length > 1 && nextProps.moves.length !== this.props.moves.length) {
+      console.log('wtf');
+      console.log(nextProps);
       this.getPair(nextProps.moves);
     }
   }
 
   submit() {
-    this.setState(
-      {
-        submitted: true
-      }
-    );
-    this.firebase.ref(`moves/${this.state.pickedMove.id}/vote`).push(this.props.user.name);
+    try {
+      this.setState(
+        {
+          submitted: true
+        }
+      );
+      this.firebase.ref(`moves/${this.state.pickedMove.id}/vote`).push(this.props.user.name);
+    }
+    catch(e) {
+      this.setState(
+        {
+          submitted: false
+        }
+      );
+    }
   }
 
   randomWinner() {
@@ -47,14 +55,9 @@ class GifVote extends React.Component {
 
   getPair(moves) {
     const currentPairId = this.props.pair;
-    const currentPair = moves.map(
-      (move) => {
-        if (move.pair_id === currentPairId) {
-          return move;
-        }
-      }
-    );
+    const currentPair = moves.filter( move => move.pair_id === currentPairId);
     if (currentPair.length === 2) {
+      console.log('set currentpair');
       this.setTimer(currentPair[0].game)
       this.setState({
         currentPair: currentPair
@@ -80,38 +83,37 @@ class GifVote extends React.Component {
   }
 
   render() {
-    const pair = this.state.currentPair && this.state.currentPair.length > 1 ? (
-      <React.Fragment>
-        <Row className="center">
-          <h2>Prompt: "{this.state.currentPair[0].prompt}"</h2>
-        </Row>
-        <Row className="center">
-         <h3>{this.state.countdown} time remaining</h3>
-        </Row>
-        <Row>
-          {this.state.currentPair.map(
-            (move, key) => {
-              let setPickedMove = this.setMove.bind(this, move);
-              return (
-                <Col key={key} xs={12} md={5} className={'vote-box ' + (this.state.pickedMove.id === move.id ? 'selected' : '')} onClick={setPickedMove}>
-                  <div className="center">{move.player}</div>
-                  <img src={move.gif.src} alt={move.gif.gif} />
-                </Col>
-              );
-            }
-          )}
-          <Col xs={12} md={1} className="center">
-            <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.submit}>Vote</Button>
-          </Col>
-          <Col xs={12} md={1} className="center">
-            <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.randomWinner}>Make my mind for me</Button>
-          </Col>
-        </Row>
-      </React.Fragment>
-    ) : '';
     return (
       <div className="gif-vote">
-        {pair}
+      {this.state && this.state.currentPair && this.state.currentPair.length > 1 &&
+        <React.Fragment>
+          <Row className="center">
+            <h2>Prompt: "{this.state.currentPair[0].prompt}"</h2>
+          </Row>
+          <Row className="center">
+           <h3>{this.state.countdown} time remaining</h3>
+          </Row>
+          <Row>
+            {this.state.currentPair.map(
+              (move, key) => {
+                let setPickedMove = this.setMove.bind(this, move);
+                return (
+                  <Col key={key} xs={12} md={5} className={'vote-box ' + (this.state.pickedMove.id === move.id ? 'selected' : '')} onClick={setPickedMove}>
+                    <div className="center">{move.player}</div>
+                    <img src={move.gif.src} alt={move.gif.gif} />
+                  </Col>
+                );
+              }
+            )}
+            <Col xs={12} md={1} className="center">
+              <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.submit}>Vote</Button>
+            </Col>
+            <Col xs={12} md={1} className="center">
+              <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.randomWinner}>Make my mind for me</Button>
+            </Col>
+          </Row>
+        </React.Fragment>
+      }
       </div>
     );
   }
