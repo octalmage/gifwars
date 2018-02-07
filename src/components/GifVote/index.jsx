@@ -19,12 +19,11 @@ class GifVote extends React.Component {
     this.firebase = firebase.database();
     this.submit = this.submit.bind(this);
     this.randomWinner = this.randomWinner.bind(this);
+    this.state.pickedMove = {};
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.moves.length > 1) {
-      console.log('wtf');
-      console.log(nextProps);
       this.getPair(nextProps.moves);
     }
   }
@@ -58,6 +57,7 @@ class GifVote extends React.Component {
     const currentPair = moves.filter( move => move.pair_id === currentPairId);
     if (currentPair.length === 2) {
       console.log('set currentpair');
+      console.log(currentPair);
       this.setTimer(currentPair[0].game)
       this.setState({
         currentPair: currentPair
