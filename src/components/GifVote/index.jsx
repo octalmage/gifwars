@@ -22,7 +22,7 @@ class GifVote extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.moves.length > 1 && nextProps.moves.length !== this.props.moves.length) {
+    if (nextProps.moves.length > 1) {
       console.log('wtf');
       console.log(nextProps);
       this.getPair(nextProps.moves);
