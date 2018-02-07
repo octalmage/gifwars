@@ -31,7 +31,8 @@ class Game extends React.Component {
         rounds: game.rounds,
         currentRound: [],
         pairId: game.pair_id,
-        votingStage: game.voting_stage
+        votingStage: game.voting_stage,
+        currentMoves: [],
       });
       if (game.rounds) {
         const roundRef = firebase.database().ref(`rounds/${game.rounds[game.round]}`);
