@@ -19,7 +19,9 @@ class GifVote extends React.Component {
     this.firebase = firebase.database();
     this.submit = this.submit.bind(this);
     this.randomWinner = this.randomWinner.bind(this);
-    this.state.pickedMove = {};
+    this.state = {
+      pickedMove: {},
+    }
   }
 
   componentWillReceiveProps(nextProps) {
