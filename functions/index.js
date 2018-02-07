@@ -164,7 +164,7 @@ const startGame = roomcode => {
 const startRound = (roomcode, round) => {
   return new Promise((resolve) => {
     return admin.database().ref(`/games/${roomcode}`).update({
-      round: round,
+      round: 1,
       stage: 'picking',
     }).then(resolve);
   })
