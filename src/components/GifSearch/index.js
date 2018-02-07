@@ -11,7 +11,7 @@ class GifSearch extends React.Component {
     super(props, context);
     this.state = {
       gif: {},
-      search: props.move.prompt,
+      search: '',
     };
 
     this.firebase = firebase.database();

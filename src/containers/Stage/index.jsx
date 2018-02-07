@@ -98,6 +98,10 @@ class Stage extends Component {
       return newMove;
     });
 
+    if (!scores.length) {
+      return;
+    }
+
     if (scores[0].score > scores[1].score) {
       return scores[0].player;
     } else {
@@ -160,26 +164,31 @@ class Stage extends Component {
           }
           {stage === 'voting' &&
           <React.Fragment>
-            {voting_stage === 'voting' && <h1>Vote on your device now!</h1>}
+
+            <h1>{moves[0] && moves[0].prompt}</h1>
+
+
             {voting_stage === 'score' &&
               <React.Fragment>
                 <h1>{this.getWinner(moves)} is the winner!</h1>
               </React.Fragment>
             }
-            { moves[0] && moves[0].gif &&
-              <p>
-                <img src={moves[0].gif.og_src} />
-                {moves[0].player}<br />
-                Votes: {moves[0].vote ? Object.values(moves[0].vote).map(vote => <span>{vote}<br /></span>) : null}
-              </p>
-            }
-            { moves[1] && moves[1].gif &&
-              <p>
-                <img src={moves[1].gif.og_src} />
-                {moves[1].player}<br />
-                Votes: {moves[1].vote && Object.values(moves[1].vote).map(vote => <span>{vote}<br /></span>)}
-              </p>
-            }
+            <Row className="show-grid">
+              { moves[0] && moves[0].gif &&
+                <Col xs={6} md={6}>
+                  <img src={moves[0].gif.og_src} style={{ maxHeight: '400px'}} />
+                  <center><h2>{moves[0].player}</h2></center>
+                  Votes: {moves[0].vote ? Object.values(moves[0].vote).map(vote => <span>{vote}{' '}</span>) : null}
+                </Col>
+              }
+              { moves[1] && moves[1].gif &&
+                <Col xs={6} md={6}>
+                  <img src={moves[1].gif.og_src} />
+                  <center><h2>{moves[1].player}</h2></center>
+                  Votes: {moves[1].vote && Object.values(moves[1].vote).map(vote => <span>{vote}{' '}</span>)}
+                </Col>
+              }
+            </Row>
           </React.Fragment>
           }
           {stage === 'score' &&

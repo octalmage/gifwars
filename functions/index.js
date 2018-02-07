@@ -53,7 +53,7 @@ exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
         }
 
         let newStage = '';
-        let timer = 15;
+        let timer = 30;
 
         if (stage === 'waiting') {
           return;
@@ -68,6 +68,7 @@ exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
         } else if (stage === 'score') {
           newStage = 'picking';
           round += 1;
+          timer = 10;
         }
 
         return startTimer(roomcode, timer)
@@ -78,7 +79,7 @@ exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
 exports.gameVoting = functions.database.ref('/games/{roomcode}/voting_stage')
   .onWrite(event => {
     const voting_stage = event.data.val();
-    const timer = voting_stage === 'voting' ? 15 : 5;
+    const timer = voting_stage === 'voting' ? 20 : 5;
     const roomcode = event.params.roomcode;
     return startTimer(roomcode, timer)
     .then(() => {
