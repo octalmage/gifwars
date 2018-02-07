@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
-import withFirebase from '../../components/ConnectFirebase';
+import ConnectFirebase from '../../components/ConnectFirebase';
 import Game from '../../services/Game';
 import MoveDisplay from '../../components/MoveDisplay';
 import firebase from '../../services/Firebase';
@@ -79,7 +79,7 @@ class Stage extends Component {
   render() {
     const { game, moves, allMoves,  } = this.props;
     const { stage, voting_stage, timer } = game;
-    
+
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
       <Grid>
@@ -150,4 +150,4 @@ class Stage extends Component {
   }
 }
 
-export default withFirebase(Stage);
+export default ConnectFirebase(Stage);

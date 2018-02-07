@@ -1,7 +1,7 @@
 import React from 'react';
 import firebase from '../../services/Firebase';
 
-const withFirebase = (WrappedComponent, roomcode) =>
+const ConnectFirebase = WrappedComponent =>
   class extends React.Component {
     constructor(props) {
       super(props);
@@ -69,4 +69,4 @@ const withFirebase = (WrappedComponent, roomcode) =>
   }
 
 
-export default withFirebase;
+export default ConnectFirebase;
