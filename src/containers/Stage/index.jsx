@@ -21,6 +21,10 @@ class Stage extends Component {
       players: [],
       stage: 'waiting',
       round: 0,
+      voting_stage: '',
+      pair_id: 1,
+      rounds: [],
+      moves: [],
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -30,27 +34,43 @@ class Stage extends Component {
       const roomcode = this.props.match.params.id;
       this.setState({ roomcode });
 
-      const playersRef = firebase.database().ref(`games/${roomcode}/players`);
-
-      playersRef.on('child_added', (data) => {
-        const players = this.state.players;
-        players.push(data.val());
-        this.setState({ players });
-      });
-
       const gameRef = firebase.database().ref(`games/${roomcode}`);
 
       gameRef.on('value', snapshot => {
         const game = snapshot.val();
+        console.log(game);
         this.setState({
           stage: game.stage,
           round: game.round,
+          players: game.players ? Object.values(game.players) : [],
+          voting_stage: game.voting_stage,
+          rounds: game.rounds ? Object.values(game.rounds) : [],
+          pair_id: game.pair_id,
         });
+
+        if (game.rounds) {
+          const roundRef = firebase.database().ref(`rounds/${game.rounds[game.round]}`);
+          roundRef.on('value', (snapshot) => {
+            const round = snapshot.val();
+            if (round) {
+              let getMoves = Object.values(round).map(move => {
+                return firebase.database().ref(`moves/${move}`).once('value').then(snapshot => snapshot.val());
+              });
+
+              Promise.all(getMoves).then(moves => {
+                const filteredMoves = moves.filter(move => move.pair_id === game.pair_id);
+                console.log(filteredMoves);
+                this.setState({ moves: filteredMoves });
+              });
+            }
+
+          });
+        }
       });
   }
 
   render() {
-    const { stage } = this.state;
+    const { stage, voting_stage, moves } = this.state;
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
       <Grid>
@@ -74,6 +94,25 @@ class Stage extends Component {
           {stage === 'picking' &&
           <React.Fragment>
             Answer the prompts on your device.
+          </React.Fragment>
+          }
+          {stage === 'voting' &&
+          <React.Fragment>
+            <h1>Vote on your device now!</h1>
+            { moves[0] && moves[0].gif &&
+              <p>
+                <img src={moves[0].gif.og_src} />
+                {moves[0].player}<br />
+                Votes: {moves[0].votes && moves[0].votes.map(vote => <span>{vote}<br /></span>)}
+              </p>
+            }
+            { moves[1] && moves[1].gif &&
+              <p>
+                <img src={moves[1].gif.og_src} />
+                {moves[1].player}<br />
+                Votes: {moves[1].votes && moves[1].votes.map(vote => <span>{vote}<br /></span>)}
+              </p>
+            }
           </React.Fragment>
           }
           </Col>

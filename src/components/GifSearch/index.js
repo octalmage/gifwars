@@ -73,7 +73,7 @@ class GifSearch extends React.Component {
   }
 
   submit() {
-    this.firebase.ref(`moves/${this.props.move.id}`).update({gif: this.state.gif});
+    firebase.database().ref(`moves/${this.props.move.id}`).update({gif: this.state.gif});
   }
 
   shuffle() {

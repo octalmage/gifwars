@@ -28,7 +28,7 @@ app.post('/:id/join', (request, response) => {
 
 app.post('/:id/start', (request, response) => {
   const roomcode = request.params.id;
-  startGame(roomcode);
+  startGame(roomcode).then(() => response.send({}));
 });
 
 exports.games = functions.https.onRequest(app);
@@ -52,7 +52,7 @@ exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
         }
 
         let newStage = '';
-        let timer = 30;
+        let timer = 15;
 
         if (stage === 'waiting') {
           return;
@@ -184,7 +184,7 @@ const generateMoves = ({ players, round, roomcode, roomKey }) => {
   // TODO: Generate prompt.
   const prompt = prompts[0];
   let pair_id = 1;
-  for (let x = 0; x <= players.length; x += 2) {
+  for (let x = 0; x < players.length; x += 2) {
     addMove({
       round,
       roomcode,

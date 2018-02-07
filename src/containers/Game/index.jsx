@@ -34,13 +34,13 @@ class Game extends React.Component {
       });
       if (game.rounds) {
         const roundRef = firebase.database().ref(`rounds/${game.rounds[game.round]}`);
-        roundRef.on('value', (snapshot) => {
+        roundRef.once('value', (snapshot) => {
           const round = snapshot.val();
           if (round) {
             Object.values(round).map(
               (move) => {
                 const moveRef = firebase.database().ref(`moves/${move}`);
-                moveRef.on('value', (snapshot) => {
+                moveRef.once('value', (snapshot) => {
                   let moveBig = snapshot.val();
                   moveBig.id = move;
                   this.moveUpdate(moveBig);
