@@ -69,6 +69,20 @@ class Stage extends Component {
       });
   }
 
+  getWinner(moves) {
+    const scores = moves.map(move => {
+      const newMove = {...move};
+      newMove['score'] = Object.values(move.vote).length;
+      return newMove;
+    });
+
+    if (scores[0].score > scores[1].score) {
+      return scores[0].player;
+    } else {
+      return scores[1].player;
+    }
+  }
+
   render() {
     const { stage, voting_stage, moves } = this.state;
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
@@ -98,19 +112,24 @@ class Stage extends Component {
           }
           {stage === 'voting' &&
           <React.Fragment>
-            <h1>Vote on your device now!</h1>
+            {voting_stage === 'voting' && <h1>Vote on your device now!</h1>}
+            {voting_stage === 'score' &&
+              <React.Fragment>
+                <h1>{this.getWinner(moves)} is the winner!</h1>
+              </React.Fragment>
+            }
             { moves[0] && moves[0].gif &&
               <p>
                 <img src={moves[0].gif.og_src} />
                 {moves[0].player}<br />
-                Votes: {moves[0].votes && moves[0].votes.map(vote => <span>{vote}<br /></span>)}
+                Votes: {moves[0].vote ? Object.values(moves[0].vote).map(vote => <span>{vote}<br /></span>) : null}
               </p>
             }
             { moves[1] && moves[1].gif &&
               <p>
                 <img src={moves[1].gif.og_src} />
                 {moves[1].player}<br />
-                Votes: {moves[1].votes && moves[1].votes.map(vote => <span>{vote}<br /></span>)}
+                Votes: {moves[1].vote && Object.values(moves[1].vote).map(vote => <span>{vote}<br /></span>)}
               </p>
             }
           </React.Fragment>
