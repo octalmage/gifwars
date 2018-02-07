@@ -57,17 +57,17 @@ class Stage extends Component {
               moves: filteredMoves,
             });
           })
-        }
 
-        const getRounds = [];
-        for (let x = 1; x <= 3; x++) {
-          getRounds.push(this.getMovesForRound(game.rounds[x]));
-        }
+          const getRounds = [];
+          for (let x = 1; x <= 3; x++) {
+            getRounds.push(this.getMovesForRound(game.rounds[x]));
+          }
 
-        Promise.all(getRounds).then(allMoves => {
-          const flattened = [].concat.apply([], allMoves);
-          this.setState({ allMoves: flattened });
-        });
+          Promise.all(getRounds).then(allMoves => {
+            const flattened = [].concat.apply([], allMoves);
+            this.setState({ allMoves: flattened });
+          });
+        }
       });
   }
 
@@ -110,9 +110,23 @@ class Stage extends Component {
       return newMove;
     });
 
-    scores.sort((a, b) => b.score - a.score);
+    let groupedScores = [];
+    scores.reduce(function (res, score) {
+      if (!res[score.player]) {
+        res[score.player] = {
+          score: 0,
+          player: score.player
+        };
 
-    return scores.map(score => <span>{score.player}: {score.score}<br /></span>)
+        groupedScores.push(res[score.player])
+      }
+      res[score.player].score += score.score
+      return res;
+    }, {});
+
+    groupedScores.sort((a, b) => b.score - a.score);
+
+    return groupedScores.map(score => <span>{score.player}: {score.score}<br /></span>)
   }
 
   render() {

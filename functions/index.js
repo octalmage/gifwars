@@ -77,8 +77,9 @@ exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
 exports.gameVoting = functions.database.ref('/games/{roomcode}/voting_stage')
   .onWrite(event => {
     const voting_stage = event.data.val();
+    const timer = voting_stage === 'voting' ? 15 : 5;
     const roomcode = event.params.roomcode;
-    return startTimer(roomcode, 15)
+    return startTimer(roomcode, timer)
     .then(() => {
       return Promise.all([getPairCount(roomcode), getPairId(roomcode)])
       .then(result => {
