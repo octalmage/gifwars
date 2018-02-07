@@ -18,11 +18,12 @@ class GifSearch extends React.Component {
     this.gifs = [];
     this.submit = this.submit.bind(this);
     this.state.countdown = 0;
-
+    this.loading = false;
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.move && (nextProps.move !== this.props.move)) {
+    console.log(nextProps);
+    if (nextProps.move) {
       console.log(nextProps);
       this.client = new GiphyClient(nextProps.move.prompt);
       if (this.gifs.length === 0) {
@@ -32,19 +33,23 @@ class GifSearch extends React.Component {
   }
 
   buildList() {
-    this.client.retrieve().then(
-      (response) => {
-        response.data.forEach((gifObject) => {
-          this.gifs.push(this.client.convert(gifObject));
-        });
-        this.setupTimer();
-        this.setState(
-          {
-            gifs: this.gifs
-          }
-        );
-      }
-    )
+    if (!this.loading) {
+      this.loading = true;
+      this.client.retrieve().then(
+        (response) => {
+          response.data.forEach((gifObject) => {
+            this.gifs.push(this.client.convert(gifObject));
+          });
+          this.setupTimer();
+          this.setState(
+            {
+              gifs: this.gifs
+            }
+          );
+          this.loading = false;
+        }
+      );
+    }
   }
 
   setupTimer() {
