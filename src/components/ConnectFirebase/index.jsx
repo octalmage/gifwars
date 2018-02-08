@@ -10,6 +10,7 @@ const ConnectFirebase = WrappedComponent =>
         game: {},
         moves: [],
         allMoves: [],
+        myMove: [],
       };
     }
 
@@ -18,7 +19,11 @@ const ConnectFirebase = WrappedComponent =>
       const gameRef = firebase.database().ref(`games/${roomcode}`);
 
       gameRef.on('value', snapshot => {
-        const game = snapshot.val();
+        let game = snapshot.val();
+
+        // Firebase arrays have unique keys, we just want an array.
+        game.players = game.players ? Object.values(game.players) : [];
+
         this.setState({
           game,
         });
@@ -27,9 +32,17 @@ const ConnectFirebase = WrappedComponent =>
           this.getMovesForRound(game.rounds[game.round])
           .then(moves => {
             const filteredMoves = moves.filter(move => move.pair_id === game.pair_id);
+            const myMoves = moves.filter(move => move.pair_id === game.pair_id);
             this.setState({
               moves: filteredMoves,
             });
+
+            if (this.props.location.state && this.props.location.state.name) {
+              const myMoves = filteredMoves.filter(move => move.player === this.props.location.state.name);
+              this.setState({
+                myMove: myMoves[0],
+              });
+            }
           })
 
           const getRounds = [];
@@ -51,8 +64,14 @@ const ConnectFirebase = WrappedComponent =>
         roundRef.once('value', snapshot => {
           const round = snapshot.val();
           if (round) {
-            let getMoves = Object.values(round).map(move => {
-              return firebase.database().ref(`moves/${move}`).once('value').then(snapshot => snapshot.val());
+            let getMoves = Object.values(round).map(moveId => {
+              return firebase.database().ref(`moves/${moveId}`).once('value').then(snapshot => snapshot.val())
+              .then(move => {
+                // Append moveId to the move object for submitting and voting.
+                const newMove = {...move};
+                newMove.id = moveId;
+                return newMove;
+              });
             });
 
             return resolve(Promise.all(getMoves));

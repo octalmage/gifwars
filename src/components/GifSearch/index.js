@@ -39,7 +39,6 @@ class GifSearch extends React.Component {
           response.data.forEach((gifObject) => {
             this.gifs.push(this.client.convert(gifObject));
           });
-          this.setupTimer();
           this.setState(
             {
               gifs: this.gifs
@@ -51,19 +50,6 @@ class GifSearch extends React.Component {
     }
   }
 
-  setupTimer() {
-    const roomcode = this.props.move.game
-    const gameRef = firebase.database().ref(`games/${roomcode}`);
-
-    gameRef.on('value', (snapshot) => {
-      const game = snapshot.val();
-      this.setState({
-        countdown: game.timer
-      });
-    });
-  }
-
-
   setGif(gif) {
     this.setState(
       {
@@ -73,12 +59,7 @@ class GifSearch extends React.Component {
   }
 
   submit() {
-    try {
-      this.firebase.ref(`moves/${this.props.move.id}`).update({gif: this.state.gif});
-    }
-    catch(e) {
-
-    }
+    this.firebase.ref(`moves/${this.props.move.id}`).update({ gif: this.state.gif });
   }
 
   shuffle() {
@@ -121,7 +102,7 @@ class GifSearch extends React.Component {
     return (
       <Row>
         <Col md={12} xs={12} className="center">
-          <h2>{ this.state.countdown } seconds remaining</h2>
+          <h2>{ this.props.countdown } seconds remaining</h2>
         </Col>
         <Col md={7} xs={12} className="gif-search-box">
         <Row className="center">

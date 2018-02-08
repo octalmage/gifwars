@@ -77,8 +77,9 @@ class Stage extends Component {
   }
 
   render() {
-    const { game, moves, allMoves,  } = this.props;
-    const { stage, voting_stage, timer } = game;
+    const { game, moves, allMoves, match } = this.props;
+    const { stage, voting_stage, timer, players } = game;
+    const { id: roomcode } = match.params;
 
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
@@ -88,10 +89,10 @@ class Stage extends Component {
             {stage === 'waiting' &&
             <React.Fragment>
               <h1 className="App-title">Start a Game</h1>
-              <p>Room Code: {this.state.roomcode}</p>
+              <p>Room Code: {roomcode}</p>
               <p>
                 Players: <br />
-                {this.state.players.map((player, i) =>
+                {players.map((player, i) =>
                 <span key ={player}>
                   <span className= "playerText">{player}</span>
                 <img alt="" src = {images[i]} className="playerImage"/>
