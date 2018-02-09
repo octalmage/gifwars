@@ -22,6 +22,7 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
+    // Redirect the user to the join screen if they don't have a user name.
     if (!this.props.location.state || !this.props.location.state.name) {
       this.props.history.push('/join');
       return;
@@ -55,7 +56,7 @@ class Game extends React.Component {
         {stage === 'voting' && voting_stage === 'voting' &&
           <React.Fragment>
             <Row className="center">
-              <h1> {'Voting in ' + this.state.id + ' on Round ' + round } </h1>
+              <h1> {'Voting in ' + roomcode + ' on Round ' + round } </h1>
             </Row>
             <Row>
               <GifVote user={this.state.user} pair={pair_id} moves={moves} countdown={timer} />
@@ -64,9 +65,6 @@ class Game extends React.Component {
         }
         {stage === 'voting' && voting_stage === 'score' &&
           <React.Fragment>
-            <Row className="center">
-              <h1> {'Voting in ' + roomcode + ' on Round ' + round } </h1>
-            </Row>
             <Row>
               <h1>Results are being tallied up on the main stage!</h1>
             </Row>
@@ -93,7 +91,9 @@ class Game extends React.Component {
               <h1> {'Score for ' + this.state.user.name + ' in Room '+ roomcode + ' on Round ' + round } </h1>
             </Row>
             <Row>
-              <div className="big-gif"><img alt="" src={myMove.gif.og_src} /></div>
+              {myMove.gif &&
+                <div className="big-gif"><img alt="" src={myMove.gif.og_src} /></div>
+              }
             </Row>
             <Row className="center">
               <h1>Round {round}: {myMove.vote ? Object.values(myMove.vote).length : 0} </h1>

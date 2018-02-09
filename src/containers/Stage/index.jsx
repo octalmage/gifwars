@@ -83,7 +83,7 @@ class Stage extends Component {
 
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
-      <Grid>
+      <Grid fluid={true}>
         <Row className="show-grid">
           <Col xs={12} md={12}>
             {stage === 'waiting' &&
@@ -116,7 +116,7 @@ class Stage extends Component {
             }
             <Row className="show-grid">
               { moves[0] && moves[0].gif &&
-                <Col xs={6} md={6}>
+                <Col xs={12} md={6}>
                   <MoveDisplay
                     votes={moves[0].vote}
                     player={moves[0].player}
@@ -125,7 +125,7 @@ class Stage extends Component {
                 </Col>
               }
               { moves[1] && moves[1].gif &&
-                <Col xs={6} md={6}>
+                <Col xs={12} md={6}>
                   <MoveDisplay
                     votes={moves[1].vote}
                     player={moves[1].player}
