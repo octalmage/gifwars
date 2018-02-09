@@ -56,24 +56,7 @@ class GifVote extends React.Component {
 
   getPair(moves) {
     const currentPairId = this.props.pair;
-    const currentPair = moves.filter( move => move.pair_id === currentPairId);
-    if (currentPair.length === 2) {
-      this.setTimer(currentPair[0].game)
-      this.setState({
-        currentPair: currentPair
-      });
-    }
-  }
-
-  setTimer(code) {
-    const gameRef = firebase.database().ref(`games/${code}`);
-
-    gameRef.on('value', (snapshot) => {
-      const game = snapshot.val();
-      this.setState({
-        countdown: game.timer
-      });
-    });
+    return moves.filter(move => move.pair_id === currentPairId);
   }
 
   setMove(move) {
@@ -83,18 +66,20 @@ class GifVote extends React.Component {
   }
 
   render() {
+    const { moves, countdown } = this.props;
+    const currentPair = this.getPair(moves);
     return (
       <div className="gif-vote">
-      {this.state && this.state.currentPair && this.state.currentPair.length > 1 &&
+      { currentPair && currentPair.length > 1 &&
         <React.Fragment>
           <Row className="center">
-            <h2>Prompt: "{this.state.currentPair[0].prompt}"</h2>
+            <h2>Prompt: "{currentPair[0].prompt}"</h2>
           </Row>
           <Row className="center">
-           <h3>{this.state.countdown} time remaining</h3>
+           <h3>{countdown} time remaining</h3>
           </Row>
           <Row>
-            {this.state.currentPair.map(
+            {currentPair.map(
               (move, key) => {
                 let setPickedMove = this.setMove.bind(this, move);
                 return (

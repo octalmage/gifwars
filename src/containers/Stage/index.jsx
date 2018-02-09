@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
+import ConnectFirebase from '../../components/ConnectFirebase';
 import Game from '../../services/Game';
 import MoveDisplay from '../../components/MoveDisplay';
 import firebase from '../../services/Firebase';
@@ -11,7 +12,7 @@ import avatar4 from '../../images/doggo_thumb.png'
 import avatar5 from '../../images/birb_thumb.png'
 import avatar6 from '../../images/giraffe_thumb.png'
 import avatar7 from '../../images/koaler_thumb.png'
-import './stage.css'
+import './stage.css';
 
 
 class Stage extends Component {
@@ -29,67 +30,6 @@ class Stage extends Component {
       allMoves: [],
       timer: 0,
     }
-
-    this.componentDidMount = this.componentDidMount.bind(this);
-  }
-
-  componentDidMount() {
-      const roomcode = this.props.match.params.id;
-      this.setState({ roomcode });
-
-      const gameRef = firebase.database().ref(`games/${roomcode}`);
-
-      gameRef.on('value', snapshot => {
-        const game = snapshot.val();
-
-        this.setState({
-          stage: game.stage,
-          round: game.round,
-          players: game.players ? Object.values(game.players) : [],
-          voting_stage: game.voting_stage,
-          rounds: game.rounds ? Object.values(game.rounds) : [],
-          pair_id: game.pair_id,
-          timer: game.timer,
-        });
-
-        if (game.rounds) {
-          this.getMovesForRound(game.rounds[game.round])
-          .then(moves => {
-            const filteredMoves = moves.filter(move => move.pair_id === game.pair_id);
-            this.setState({
-              moves: filteredMoves,
-            });
-          })
-
-          const getRounds = [];
-          for (let x = 1; x <= 3; x++) {
-            getRounds.push(this.getMovesForRound(game.rounds[x]));
-          }
-
-          Promise.all(getRounds).then(allMoves => {
-            const flattened = [].concat.apply([], allMoves);
-            this.setState({ allMoves: flattened });
-          });
-        }
-      });
-  }
-
-  getMovesForRound(round) {
-    const roundRef = firebase.database().ref(`rounds/${round}`);
-    return new Promise(resolve => {
-      roundRef.once('value', snapshot => {
-        const round = snapshot.val();
-        if (round) {
-          let getMoves = Object.values(round).map(move => {
-            return firebase.database().ref(`moves/${move}`).once('value').then(snapshot => snapshot.val());
-          });
-
-          return resolve(Promise.all(getMoves));
-        } else {
-          return resolve([]);
-        }
-      });
-    });
   }
 
   getWinner(moves) {
@@ -137,19 +77,22 @@ class Stage extends Component {
   }
 
   render() {
-    const { stage, voting_stage, moves, allMoves, timer } = this.state;
+    const { game, moves, allMoves, match } = this.props;
+    const { stage, voting_stage, timer, players } = game;
+    const { id: roomcode } = match.params;
+
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
-      <Grid>
+      <Grid fluid={true}>
         <Row className="show-grid">
           <Col xs={12} md={12}>
             {stage === 'waiting' &&
             <React.Fragment>
               <h1 className="App-title">Start a Game</h1>
-              <p>Room Code: {this.state.roomcode}</p>
+              <p>Room Code: {roomcode}</p>
               <p>
                 Players: <br />
-                {this.state.players.map((player, i) =>
+                {players.map((player, i) =>
                 <span key ={player}>
                   <span className= "playerText">{player}</span>
                 <img alt="" src = {images[i]} className="playerImage"/>
@@ -173,7 +116,7 @@ class Stage extends Component {
             }
             <Row className="show-grid">
               { moves[0] && moves[0].gif &&
-                <Col xs={6} md={6}>
+                <Col xs={12} md={6}>
                   <MoveDisplay
                     votes={moves[0].vote}
                     player={moves[0].player}
@@ -182,7 +125,7 @@ class Stage extends Component {
                 </Col>
               }
               { moves[1] && moves[1].gif &&
-                <Col xs={6} md={6}>
+                <Col xs={12} md={6}>
                   <MoveDisplay
                     votes={moves[1].vote}
                     player={moves[1].player}
@@ -208,4 +151,4 @@ class Stage extends Component {
   }
 }
 
-export default Stage;
+export default ConnectFirebase(Stage);
