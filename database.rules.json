@@ -1,6 +1,24 @@
 {
   "rules": {
-    ".read": true,
-    ".write": true
+    "games": {
+      ".read": true,
+      ".write": false
+    },
+    "rounds": {
+      ".read": true,
+      ".write": false
+    },
+    "moves": {
+      "$move_id": {
+        ".read": true,
+        "gif": {
+          ".write": "data.parent().child('player').val() === auth.uid"
+        },
+        "vote": {
+          ".write": "root.child('games/'+data.parent().child('game').val()+'/players/'+auth.uid).exists()",
+          ".validate": "data.parent().child('player').val() !== auth.uid"
+        }
+      }
+    }
   }
 }

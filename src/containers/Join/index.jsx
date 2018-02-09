@@ -52,7 +52,7 @@ class Join extends React.Component {
       displayName: this.state.name,
     })
     .then(() =>
-      this.game.joinGame(this.state.roomcode)
+      this.game.joinGame(this.state.roomcode, this.state.name, currentUser.uid)
       .then(response => {
         this.props.history.push(`/game/${this.state.roomcode}`, { name: this.state.name });
       })

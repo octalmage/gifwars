@@ -12,8 +12,8 @@ export default class Game {
     .then(response => response.json());
   }
 
-  joinGame(roomcode, name) {
-    return fetch(this.route(`${roomcode}/join`), { body: name, method: 'post' })
+  joinGame(roomcode, name, id) {
+    return fetch(this.route(`${roomcode}/join`), { body: { name, id }, method: 'post' })
     .then(response => response.json());
   }
 
