@@ -77,6 +77,9 @@ exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
 exports.gameVoting = functions.database.ref('/games/{roomcode}/voting_stage')
   .onWrite(event => {
     const voting_stage = event.data.val();
+    if (!voting_stage) {
+      return;
+    }
     const timer = voting_stage === 'voting' ? 20 : 5;
     const roomcode = event.params.roomcode;
     return startTimer(roomcode, timer)
