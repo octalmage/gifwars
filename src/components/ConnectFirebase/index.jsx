@@ -52,9 +52,11 @@ const ConnectFirebase = WrappedComponent =>
             getRounds.push(this.getMovesForRound(game.rounds[x]));
           }
 
-          Promise.all(getRounds).then(allMoves => {
-            const flattened = [].concat.apply([], allMoves);
-            this.setState({ allMoves: flattened });
+          Promise.all(getRounds)
+          .then(allMoves => [].concat.apply([], allMoves))
+          .then(this.correctPlayerNames)
+          .then(allMoves => {
+            this.setState({ allMoves });
           });
         }
       });

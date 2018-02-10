@@ -16,7 +16,7 @@
         },
         "vote": {
           ".write": "root.child('games/'+data.parent().child('game').val()+'/players/'+auth.uid).exists()",
-          ".validate": "data.parent().child('player').val() !== auth.uid"
+          ".validate": "data.parent().child('player').val() !== auth.uid && !data.parent().child('vote').child(newData.val()).exists()"
         }
       }
     }

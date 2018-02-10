@@ -37,7 +37,7 @@ class GifVote extends React.Component {
           submitted: true
         }
       );
-      this.firebase.ref(`moves/${this.state.pickedMove.id}/vote`).push(this.props.user.name);
+      this.firebase.ref(`moves/${this.state.pickedMove.id}/vote/${firebase.auth().currentUser.uid}`).set(this.props.user.name);
     }
     catch(e) {
       this.setState(
