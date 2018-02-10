@@ -5,11 +5,7 @@ const admin = require('firebase-admin');
 const values = require('object.values');
 const cors = require('cors')({ origin: true });
 const fs = require('fs');
-
 const { isOdd, makeid } = require('./src/Utils');
-
-// TODO: Read these from the file.
-const prompts = ["What's the Mona Lisa smiling about?"];
 
 admin.initializeApp(functions.config().firebase);
 
@@ -23,7 +19,9 @@ app.post('/', (request, response) => {
 });
 
 app.post('/:id/join', (request, response) => {
-  response.send(joinGame(request.params.id, request.body))
+  const { name, id } = JSON.parse(request.body);
+  console.log(request.body, id);
+  response.send(joinGame(request.params.id, name, id));
 });
 
 
@@ -101,7 +99,7 @@ exports.gameVoting = functions.database.ref('/games/{roomcode}/voting_stage')
 
 const getVotingStage = roomcode => getValue(`/games/${roomcode}/voting_stage`);
 const getPairId = roomcode => getValue(`/games/${roomcode}/pair_id`);
-const getPlayers = roomcode => getValues(`/games/${roomcode}/players`);
+const getPlayers = roomcode => getValue(`/games/${roomcode}/players`);
 const getRound = roomcode => getValue(`/games/${roomcode}/round`);
 
 const getValue = path =>
@@ -156,7 +154,8 @@ const createGame = (owner) => {
   });
 };
 
-const joinGame = (roomcode, player) => admin.database().ref(`/games/${roomcode}/players`).push(player);
+const joinGame = (roomcode, player, id) =>
+  admin.database().ref(`/games/${roomcode}/players/${id}`).set(player);
 
 const startGame = roomcode => {
   return startRound(roomcode, 1)
@@ -179,7 +178,8 @@ const startRound = (roomcode, round) => {
   })
   .then(result => {
     const [roomKey, players] = result;
-    return generateMoves({ players, roomcode, round: round, roomKey });
+    const playerIds = Object.keys(players);
+    return generateMoves({ roomcode, roomKey, round: round, players: playerIds });
   });
 };
 

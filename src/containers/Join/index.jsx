@@ -1,6 +1,7 @@
 import React from 'react';
 import {Grid, Row, Col, Form, FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap';
 import Game from '../../services/Game';
+import firebase from '../../services/Firebase';
 
 class Join extends React.Component {
   constructor(props, context) {
@@ -13,6 +14,16 @@ class Join extends React.Component {
     };
 
     this.game = new Game();
+  }
+
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user && user.displayName) {
+        this.setState({ name: user.displayName });
+      }
+    });
+
+    firebase.auth().signInAnonymously();
   }
 
   getValidationState(value) {
@@ -36,10 +47,16 @@ class Join extends React.Component {
   }
 
   joinGame() {
-    this.game.joinGame(this.state.roomcode, this.state.name)
-    .then(response => {
-      this.props.history.push(`/game/${this.state.roomcode}`, {name: this.state.name});
-    });
+    const currentUser = firebase.auth().currentUser;
+    currentUser.updateProfile({
+      displayName: this.state.name,
+    })
+    .then(() =>
+      this.game.joinGame(this.state.roomcode, this.state.name, currentUser.uid)
+      .then(response => {
+        this.props.history.push(`/game/${this.state.roomcode}`, { name: this.state.name });
+      })
+    )
   }
 
   render() {

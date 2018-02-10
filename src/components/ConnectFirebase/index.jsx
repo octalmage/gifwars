@@ -32,13 +32,15 @@ const ConnectFirebase = WrappedComponent =>
           this.getMovesForRound(game.rounds[game.round])
           .then(moves => {
             const filteredMoves = moves.filter(move => move.pair_id === game.pair_id);
-            const myMoves = moves.filter(move => move.pair_id === game.pair_id);
-            this.setState({
-              moves: filteredMoves,
+            this.correctPlayerNames(filteredMoves)
+            .then(correctedMoves => {
+              this.setState({
+                moves: correctedMoves,
+              });
             });
 
             if (this.props.location.state && this.props.location.state.name) {
-              const myMoves = filteredMoves.filter(move => move.player === this.props.location.state.name);
+              const myMoves = filteredMoves.filter(move => move.player === firebase.auth().currentUser.uid);
               this.setState({
                 myMove: myMoves[0],
               });
@@ -50,9 +52,11 @@ const ConnectFirebase = WrappedComponent =>
             getRounds.push(this.getMovesForRound(game.rounds[x]));
           }
 
-          Promise.all(getRounds).then(allMoves => {
-            const flattened = [].concat.apply([], allMoves);
-            this.setState({ allMoves: flattened });
+          Promise.all(getRounds)
+          .then(allMoves => [].concat.apply([], allMoves))
+          .then(this.correctPlayerNames)
+          .then(allMoves => {
+            this.setState({ allMoves });
           });
         }
       });
@@ -79,6 +83,23 @@ const ConnectFirebase = WrappedComponent =>
             return resolve([]);
           }
         });
+      });
+    }
+
+    correctPlayerNames(moves) {
+      if (!moves) {
+        return Promise.resolve(moves);
+      }
+
+      return firebase.database().ref(`games/${moves[0].game}/players`)
+      .once('value')
+      .then(snapshot => snapshot.val())
+      .then(players => {
+        for (let x in moves) {
+          moves[x].playerId = moves[x].player;
+          moves[x].player = players[moves[x].player];
+        }
+        return moves;
       });
     }
 

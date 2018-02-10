@@ -29,16 +29,20 @@ class Game extends React.Component {
     }
   }
 
-  calcUserTotal(myMove) {
+  calcUserTotal(moves) {
+    const currentUser = firebase.auth().currentUser;
     let total = 0;
-    total += myMove && myMove.vote ? Object.values(myMove.vote).length : 0;
-    this.setState({
-      userTotal: total
-    });
+    for (let x in moves) {
+      if (moves[x].playerId === currentUser.uid) {
+        total += moves[x] && moves[x].vote ? Object.values(moves[x].vote).length : 0;
+      }
+    }
+
+    return total;
   }
 
   render() {
-    const { myMove, game, moves } = this.props;
+    const { myMove, game, moves, allMoves } = this.props;
     const { stage, voting_stage, round, pair_id, timer } = game;
     const roomcode = this.props.match.params.id;
     return (
@@ -97,7 +101,7 @@ class Game extends React.Component {
             </Row>
             <Row className="center">
               <h1>Round {round}: {myMove.vote ? Object.values(myMove.vote).length : 0} </h1>
-              {/* <h1>Total: {this.state.userTotal + (this.state.myMove.vote ? Object.values(this.state.myMove.vote).length : 0)}</h1> */}
+              <h1>Total: {this.calcUserTotal(allMoves)}</h1>
             </Row>
           </React.Fragment>
         }
