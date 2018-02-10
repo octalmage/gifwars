@@ -19,7 +19,8 @@ app.post('/', (request, response) => {
 });
 
 app.post('/:id/join', (request, response) => {
-  const { name, id } = request.body;
+  const { name, id } = JSON.parse(request.body);
+  console.log(request.body, id);
   response.send(joinGame(request.params.id, name, id));
 });
 
