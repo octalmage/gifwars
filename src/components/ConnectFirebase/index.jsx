@@ -92,6 +92,7 @@ const ConnectFirebase = WrappedComponent =>
       .then(snapshot => snapshot.val())
       .then(players => {
         for (let x in moves) {
+          moves[x].playerId = moves[x].player;
           moves[x].player = players[moves[x].player];
         }
         return moves;
