@@ -48,7 +48,6 @@ class Join extends React.Component {
 
   joinGame() {
     const currentUser = firebase.auth().currentUser;
-    console.log(currentUser.uid);
     currentUser.updateProfile({
       displayName: this.state.name,
     })
