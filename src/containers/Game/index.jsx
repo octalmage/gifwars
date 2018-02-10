@@ -8,7 +8,7 @@ import firebase from '../../services/Firebase';
 import GameAPI from '../../services/Game';
 import GifVote from '../../components/GifVote';
 
-class Game extends React.Component {
+class Game extends React.PureComponent {
   constructor(props, context) {
     super(props, context);
     this.state = {};

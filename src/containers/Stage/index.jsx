@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
 import ConnectFirebase from '../../components/ConnectFirebase';
 import MoveDisplay from '../../components/MoveDisplay';
@@ -13,7 +13,7 @@ import avatar7 from '../../images/koaler_thumb.png'
 import './stage.css';
 
 
-class Stage extends Component {
+class Stage extends React.PureComponent {
   constructor(props) {
     super(props);
 

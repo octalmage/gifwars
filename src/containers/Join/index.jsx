@@ -3,7 +3,7 @@ import {Grid, Row, Col, Form, FormGroup, ControlLabel, FormControl, Button} from
 import Game from '../../services/Game';
 import firebase from '../../services/Firebase';
 
-class Join extends React.Component {
+class Join extends React.PureComponent {
   constructor(props, context) {
     super(props, context);
     this.handleChange = this.handleChange.bind(this);

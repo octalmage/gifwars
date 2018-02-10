@@ -29,34 +29,27 @@ const ConnectFirebase = WrappedComponent =>
         });
 
         if (game.rounds) {
-          this.getMovesForRound(game.rounds[game.round])
-          .then(moves => {
-            const filteredMoves = moves.filter(move => move.pair_id === game.pair_id);
-            this.correctPlayerNames(filteredMoves)
-            .then(correctedMoves => {
-              this.setState({
-                moves: correctedMoves,
-              });
-            });
-
-            if (this.props.location.state && this.props.location.state.name) {
-              const myMoves = filteredMoves.filter(move => move.player === firebase.auth().currentUser.uid);
-              this.setState({
-                myMove: myMoves[0],
-              });
-            }
-          })
-
           const getRounds = [];
           for (let x = 1; x <= 3; x++) {
             getRounds.push(this.getMovesForRound(game.rounds[x]));
           }
 
           Promise.all(getRounds)
+          // Flatten array.
           .then(allMoves => [].concat.apply([], allMoves))
+          // Lookup player names by uid.
           .then(this.correctPlayerNames)
           .then(allMoves => {
-            this.setState({ allMoves });
+            let newState = {
+              allMoves,
+            };
+            const movesForRound = allMoves.filter(move => move.round === game.round);
+            const filteredMoves = movesForRound.filter(move => move.pair_id === game.pair_id);
+            newState['moves'] = filteredMoves;
+            if (this.props.location.state && this.props.location.state.name) {
+              newState['myMove'] = filteredMoves.filter(move => move.playerId === firebase.auth().currentUser.uid)[0];
+            }
+            this.setState(newState);
           });
         }
       });
@@ -87,7 +80,7 @@ const ConnectFirebase = WrappedComponent =>
     }
 
     correctPlayerNames(moves) {
-      if (!moves) {
+      if (!moves.length) {
         return Promise.resolve(moves);
       }
 

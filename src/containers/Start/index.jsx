@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
 import Game from '../../services/Game';
 
-class Start extends Component {
+class Start extends React.PureComponent {
   constructor(props) {
     super(props);
 

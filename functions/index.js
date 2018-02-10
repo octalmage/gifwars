@@ -168,6 +168,7 @@ const startRound = (roomcode, round) => {
     return admin.database().ref(`/games/${roomcode}`).update({
       round: 1,
       stage: 'picking',
+      pair_id: 1,
     }).then(resolve);
   })
   .then(() => {
@@ -256,7 +257,7 @@ const generateMove = ({ round, roomcode, player, prompt, pair_id }) => ({
 });
 
 const getPrompts = (count) => {
-  let contents = fs.readFileSync('./prompts/work.txt', 'utf8');
+  let contents = fs.readFileSync('./prompts/generic.txt', 'utf8');
   /*console.log(contents);**/
   var prompts = contents.split("\n")
   var finalprompts = []
