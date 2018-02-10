@@ -3,7 +3,6 @@ import {Grid, Row, Col} from 'react-bootstrap';
 import ConnectFirebase from '../../components/ConnectFirebase';
 import Game from '../../services/Game';
 import MoveDisplay from '../../components/MoveDisplay';
-import firebase from '../../services/Firebase';
 import avatar8 from '../../images/dino_thumb.png';
 import avatar1 from '../../images/crabby_thumb.png'
 import avatar2 from '../../images/cat_thumb.png'

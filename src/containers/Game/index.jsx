@@ -4,7 +4,6 @@ import GifSearch from '../../components/GifSearch';
 import ConnectFirebase from '../../components/ConnectFirebase';
 import { withRouter } from 'react-router';
 import { Button } from 'react-bootstrap';
-import background from './images/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif';
 import firebase from '../../services/Firebase';
 import GameAPI from '../../services/Game';
 import GifVote from '../../components/GifVote';

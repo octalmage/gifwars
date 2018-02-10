@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
 import Game from '../../services/Game';
-import firebase from '../../services/Firebase';
 
 class Start extends Component {
   constructor(props) {
