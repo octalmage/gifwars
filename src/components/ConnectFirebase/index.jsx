@@ -87,6 +87,10 @@ const ConnectFirebase = WrappedComponent =>
     }
 
     correctPlayerNames(moves) {
+      if (!moves) {
+        return Promise.resolve(moves);
+      }
+
       return firebase.database().ref(`games/${moves[0].game}/players`)
       .once('value')
       .then(snapshot => snapshot.val())
