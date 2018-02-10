@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
 import ConnectFirebase from '../../components/ConnectFirebase';
-import Game from '../../services/Game';
 import MoveDisplay from '../../components/MoveDisplay';
 import avatar8 from '../../images/dino_thumb.png';
 import avatar1 from '../../images/crabby_thumb.png'
