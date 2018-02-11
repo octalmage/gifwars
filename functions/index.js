@@ -20,7 +20,6 @@ app.post('/', (request, response) => {
 
 app.post('/:id/join', (request, response) => {
   const { name, id } = JSON.parse(request.body);
-  console.log(request.body, id);
   response.send(joinGame(request.params.id, name, id));
 });
 
@@ -69,7 +68,28 @@ exports.gameRound = functions.database.ref('/games/{roomcode}/stage')
           timer = 10;
         }
 
-        return startTimer(roomcode, timer)
+        return startTimer(roomcode, timer, () =>
+          getValue(`/games/${roomcode}`)
+          .then(game => {
+            if (stage !== 'picking') {
+              return;
+            }
+            else if (game.round > 0) {
+              return getMovesForRound(game.rounds[game.round])
+              .then(moves => {
+                let done = true;
+                for (let x in moves) {
+                  if (!moves[x].gif || moves[x].gif === '') {
+                    done = false;
+                  }
+                }
+                if (done) {
+                  return Promise.reject();
+                }
+              });
+            }
+          })
+        )
         .then(() => admin.database().ref(`/games/${roomcode}`).update({ round, stage: newStage }));
       });
     });
@@ -82,7 +102,30 @@ exports.gameVoting = functions.database.ref('/games/{roomcode}/voting_stage')
     }
     const timer = voting_stage === 'voting' ? 20 : 5;
     const roomcode = event.params.roomcode;
-    return startTimer(roomcode, timer)
+    return startTimer(roomcode, timer, () =>
+      getValue(`/games/${roomcode}`)
+      .then(game => {
+        if (voting_stage !== 'voting') {
+          return;
+        }
+        else if (game.round > 0) {
+          return getMovesForRound(game.rounds[game.round])
+          .then(moves => moves.filter(move => move.pair_id === game.pair_id))
+          .then(moves => {
+            let done = true;
+            for (let x in moves) {
+              // Number of votes should be one less than number of players.
+              if (!moves[x].vote || Object.keys(moves[x].vote).length !== (Object.keys(game.players).length - 1)) {
+                done = false;
+              }
+            }
+            if (done) {
+              return Promise.reject();
+            }
+          });
+        }
+      })
+    )
     .then(() => {
       return Promise.all([getPairCount(roomcode), getPairId(roomcode)])
       .then(result => {
@@ -128,12 +171,17 @@ const setValue = (path, value) =>
 const getPairCount = roomcode => getPlayers(roomcode)
 .then(players => Math.ceil(players.length / 2));
 
-const startTimer = (roomcode, time) => [...Array(time+1)].reduce((p, _, i) =>
-p.then(_ => new Promise(resolve =>
-  setTimeout(() => {
-    return admin.database().ref(`/games/${roomcode}/timer`).set(time - i)
-    .then(resolve);
-  }, 1000)
+const startTimer = (roomcode, time, shouldContinue) => [...Array(time+1)].reduce((p, _, i) =>
+p.then(_ => new Promise(resolve => {
+  const check = typeof shouldContinue === 'function' ? shouldContinue() : Promise.resolve();
+  check.then(() => {
+    setTimeout(() => {
+      admin.database().ref(`/games/${roomcode}/timer`).set(time - i)
+      .then(resolve)
+    }, 1000)
+  })
+  .catch(resolve);
+}
 )), Promise.resolve());
 
 const createGame = (owner) => {
@@ -254,7 +302,6 @@ const generateMove = ({ round, roomcode, player, prompt, pair_id }) => ({
 
 const getPrompts = (count) => {
   let contents = fs.readFileSync('./prompts/generic.txt', 'utf8');
-  /*console.log(contents);**/
   var prompts = contents.split("\n")
   var finalprompts = []
   for (var i = 0; i<count; i++) {
@@ -265,3 +312,28 @@ const getPrompts = (count) => {
   }
   return finalprompts;
 }
+
+// TODO: Put this in a shared library.
+const getMovesForRound = round => {
+  const roundRef = admin.database().ref(`rounds/${round}`);
+  return new Promise(resolve => {
+    roundRef.once('value', snapshot => {
+      const round = snapshot.val();
+      if (round) {
+        let getMoves = values(round).map(moveId => {
+          return admin.database().ref(`moves/${moveId}`).once('value').then(snapshot => snapshot.val())
+          .then(move => {
+            // Append moveId to the move object for submitting and voting.
+            const newMove = Object.assign({}, move);
+            newMove.id = moveId;
+            return newMove;
+          });
+        });
+
+        return resolve(Promise.all(getMoves));
+      } else {
+        return resolve([]);
+      }
+    });
+  });
+};

@@ -147,6 +147,16 @@ class Stage extends React.PureComponent {
           : null}
           </Col>
         </Row>
+        {stage === 'waiting' &&
+          <audio autoPlay tabIndex="0" loop>
+            <source type="audio/mpeg" src="/sounds/elevator.mp3"></source>
+          </audio>
+        }
+        {stage !== 'waiting' &&
+          <audio autoPlay tabIndex="0" loop>
+            <source type="audio/mpeg" src="/sounds/psychedelic.mp3"></source>
+          </audio>
+        }
       </Grid>
     );
   }
