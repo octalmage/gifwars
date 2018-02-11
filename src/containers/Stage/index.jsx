@@ -142,7 +142,7 @@ class Stage extends React.PureComponent {
               <h1>Scores</h1>
               {this.calculateScores(allMoves)}</div>
           }
-          {(timer && timer !== 0) ?
+          {timer ?
             <h2>Time left: {timer}</h2>
           : null}
           </Col>

@@ -42,6 +42,7 @@ const ConnectFirebase = WrappedComponent =>
           .then(allMoves => {
             let newState = {
               allMoves,
+              game,
             };
             const movesForRound = allMoves.filter(move => move.round === game.round);
             const filteredMoves = movesForRound.filter(move => move.pair_id === game.pair_id);
@@ -49,8 +50,11 @@ const ConnectFirebase = WrappedComponent =>
             if (this.props.location.state && this.props.location.state.name) {
               newState['myMove'] = filteredMoves.filter(move => move.playerId === firebase.auth().currentUser.uid)[0];
             }
+
             this.setState(newState);
           });
+        } else {
+          this.setState({ game });
         }
       });
     }

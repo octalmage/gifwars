@@ -171,18 +171,21 @@ const setValue = (path, value) =>
 const getPairCount = roomcode => getPlayers(roomcode)
 .then(players => Math.ceil(players.length / 2));
 
-const startTimer = (roomcode, time, shouldContinue) => [...Array(time+1)].reduce((p, _, i) =>
-p.then(_ => new Promise(resolve => {
+const startTimer = (roomcode, time, shouldContinue) =>
+admin.database().ref(`/games/${roomcode}/timer`).set(time)
+.then(() => [...Array(time + 1)].reduce((p, _, i) =>
+p.then(diff => new Promise(resolve => {
+  const start = new Date().getTime();
   const check = typeof shouldContinue === 'function' ? shouldContinue() : Promise.resolve();
   check.then(() => {
     setTimeout(() => {
-      admin.database().ref(`/games/${roomcode}/timer`).set(time - i)
-      .then(resolve)
-    }, 1000)
+      admin.database().ref(`/games/${roomcode}/timer`).set(time - i - 1)
+      .then(() => resolve(new Date().getTime() - start - 1000))
+    }, 1000 - (diff > 0 ? diff : 0))
   })
   .catch(resolve);
 }
-)), Promise.resolve());
+)), Promise.resolve(0)));
 
 const createGame = (owner) => {
   return new Promise((resolve) => {
