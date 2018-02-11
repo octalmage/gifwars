@@ -128,18 +128,12 @@ const setValue = (path, value) =>
 const getPairCount = roomcode => getPlayers(roomcode)
 .then(players => Math.ceil(players.length / 2));
 
-const startTimer = (roomcode, time) => [...Array(time+1)].reduce( (p, _, i) =>
+const startTimer = (roomcode, time) => [...Array(time+1)].reduce((p, _, i) =>
 p.then(_ => new Promise(resolve =>
   setTimeout(() => {
-    admin.database().ref(`/games/${roomcode}/timer`).once('value').then((snapshot) => {
-      let timer = snapshot.val();
-      if (timer) {
-        timer = timer - 1;
-      } else {
-        timer = time;
-      }
-      return admin.database().ref(`/games/${roomcode}/timer`).set(timer);
-    }).then(resolve);
+    console.log('Timer: ' + time - i);
+    return admin.database().ref(`/games/${roomcode}/timer`).set(time - i)
+    .then(resolve);
   }, 1000)
 )), Promise.resolve());
 
