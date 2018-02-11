@@ -13,4 +13,22 @@
 
 .roomcode {
   font-size: 1.5em;
+  text-shadow: 5px 2px #000;
+}
+
+.waiting {
+  text-align: center;
+}
+
+.title {
+  text-align: center;
+}
+
+.domain {
+  font-size: 1.2em;
+  text-shadow: 5px 2px #000;
+}
+
+.everyone {
+  color: #000;
 }

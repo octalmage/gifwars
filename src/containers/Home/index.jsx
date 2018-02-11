@@ -6,7 +6,7 @@ import './Home.css';
 const Home = () => (
   <Grid>
     <Row className="show-grid">
-      <Col xs={12} md={12}><h1 className="center">GifWars</h1></Col>
+      <Col xs={12} md={12}><h1 className="center">Gif Wars</h1></Col>
     </Row>
     <Row className="show-grid">
       <Col xs={12} md={12} className="center home-buttons"><Link to="/start"><Button bsStyle="primary" bsSize="large">Start a game</Button></Link></Col>
