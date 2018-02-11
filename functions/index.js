@@ -131,7 +131,6 @@ const getPairCount = roomcode => getPlayers(roomcode)
 const startTimer = (roomcode, time) => [...Array(time+1)].reduce((p, _, i) =>
 p.then(_ => new Promise(resolve =>
   setTimeout(() => {
-    console.log('Timer: ' + time - i);
     return admin.database().ref(`/games/${roomcode}/timer`).set(time - i)
     .then(resolve);
   }, 1000)
