@@ -76,7 +76,7 @@ class Stage extends React.PureComponent {
 
   render() {
     const { game, moves, allMoves, match } = this.props;
-    const { stage, voting_stage, timer, players } = game;
+    const { stage, voting_stage, timer, players, round } = game;
     const { id: roomcode } = match.params;
 
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
@@ -89,23 +89,27 @@ class Stage extends React.PureComponent {
 <React.Fragment>
             <div className="waiting">
               <h2>
-                Go to <span className="domain">gifwars.party</span> on your mobile device to join in using room code
-                <span className="roomcode"> {roomcode}</span>
+                <span className="textBackground">
+                  Go to <span className="domain">gifwars.party</span> on your mobile device to join in using room code
+                  <span className="roomcode"> {roomcode}</span>
+                </span>
               </h2>
               <h3>
-                Press <span className="everyone">All players have joined</span> to start the game!
+                <span className="textBackground">
+                  Press <span className="everyone">All players have joined</span> to start the game!
+                </span>
               </h3>
-
           </div>
           <h3>
-            Players: <br />
-            {players.map((player, i) =>
-            <span key ={player}>
-              <span className= "playerText">{player}</span>
-            <img alt="" src = {images[i]} className="playerImage"/>
-            <br />
-          </span>)}
-        </h3>
+            <center>
+            <span>
+              {players.map((player, i) =>
+                <span key={player + i}>
+                  <span className="playerText textBackground">{player}</span>
+                </span>)}
+              </span>
+            </center>
+            </h3>
         </React.Fragment>
           }
           {stage === 'picking' &&
@@ -145,8 +149,12 @@ class Stage extends React.PureComponent {
           }
           {stage === 'score' &&
             <div>
+              {round === 3 &&
+                <h1>Game Over!</h1>
+              }
               <h1>Scores</h1>
-              {this.calculateScores(allMoves)}</div>
+              {this.calculateScores(allMoves)}
+            </div>
           }
           {timer ?
             <h2>Time left: {timer}</h2>

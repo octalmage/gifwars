@@ -1,5 +1,5 @@
 .playerText{
-  padding: 10px;
+  margin: 10px;
   color: white;
 }
 
@@ -14,6 +14,7 @@
 .roomcode {
   font-size: 1.5em;
   text-shadow: 5px 2px #000;
+  vertical-align: middle;
 }
 
 .waiting {
@@ -22,6 +23,8 @@
 
 .title {
   text-align: center;
+  font-weight: 100;
+  font-size: 48px;
 }
 
 .domain {
@@ -31,4 +34,10 @@
 
 .everyone {
   color: #000;
+}
+
+.textBackground {
+  background-color:  rgba(0,0,0,.5);
+  padding: 10px;
+  line-height: 2.5em;
 }

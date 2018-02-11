@@ -143,13 +143,13 @@ class GifSearch extends React.Component {
         </Col>
         <Col xs={12} md={5}>
           <Row className="center">
+            <Button className="gif-search-buttons" bsStyle="primary" bsSize="large" onClick={this.submit}>Submit</Button>
+          </Row>
+          <Row className="center">
             <Button className="gif-search-buttons" bsStyle="info" bsSize="large" onClick={this.shuffle}>Shuffle</Button>
           </Row>
           <Row className="center">
             <Button className="gif-search-buttons" disabled={this.state.luckyLoading} bsStyle="info" bsSize="large" onClick={this.lucky}>I'm feeling lucky</Button>
-          </Row>
-          <Row className="center">
-            <Button className="gif-search-buttons" bsStyle="primary" bsSize="large" onClick={this.submit}>Submit</Button>
           </Row>
         </Col>
       </Row>

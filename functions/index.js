@@ -173,7 +173,7 @@ const getPairCount = roomcode => getPlayers(roomcode)
 
 const startTimer = (roomcode, time, shouldContinue) =>
 admin.database().ref(`/games/${roomcode}/timer`).set(time)
-.then(() => [...Array(time + 1)].reduce((p, _, i) =>
+.then(() => [...Array(time)].reduce((p, _, i) =>
 p.then(diff => new Promise(resolve => {
   const start = new Date().getTime();
   const check = typeof shouldContinue === 'function' ? shouldContinue() : Promise.resolve();
