@@ -82,13 +82,16 @@ class Stage extends React.PureComponent {
     const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
       <Grid fluid={true}>
-        <Row className="show-grid">
+        <Row>
           <Col xs={12} md={12}>
+            <h1>Gif Wars</h1>
             {stage === 'waiting' &&
             <React.Fragment>
-              <h1 className="App-title">Start a Game</h1>
-              <p>Room Code: {roomcode}</p>
-              <p>
+              <h2>
+                Go to gifwars.party mobile device to join in using room code
+                <span className="roomcode"> {roomcode}</span>
+              </h2>
+              <h3>
                 Players: <br />
                 {players.map((player, i) =>
                 <span key ={player}>
@@ -96,7 +99,7 @@ class Stage extends React.PureComponent {
                 <img alt="" src = {images[i]} className="playerImage"/>
                 <br />
               </span>)}
-              </p>
+            </h3>
             </React.Fragment>
           }
           {stage === 'picking' &&
