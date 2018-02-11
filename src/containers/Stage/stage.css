@@ -9,10 +9,8 @@
   padding: 5px;
   display: -webkit-flex; /* Safari */
   display: flex;
+}
 
-
-
-
-
-
+.roomcode {
+  font-size: 1.5em;
 }

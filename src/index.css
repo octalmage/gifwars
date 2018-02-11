@@ -2,9 +2,10 @@ body {
   color: white !important;
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: helvetica;
   color: white !important;
 }
+
 @media (max-height: 736px) and (max-width: 480px) {
   body {
 background: url("./images/gifwars_mobile_background.png");
