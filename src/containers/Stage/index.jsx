@@ -84,23 +84,29 @@ class Stage extends React.PureComponent {
       <Grid fluid={true}>
         <Row>
           <Col xs={12} md={12}>
-            <h1>Gif Wars</h1>
+            <h1 className="title">Gif Wars</h1>
             {stage === 'waiting' &&
-            <React.Fragment>
+<React.Fragment>
+            <div className="waiting">
               <h2>
-                Go to gifwars.party mobile device to join in using room code
+                Go to <span className="domain">gifwars.party</span> on your mobile device to join in using room code
                 <span className="roomcode"> {roomcode}</span>
               </h2>
               <h3>
-                Players: <br />
-                {players.map((player, i) =>
-                <span key ={player}>
-                  <span className= "playerText">{player}</span>
-                <img alt="" src = {images[i]} className="playerImage"/>
-                <br />
-              </span>)}
-            </h3>
-            </React.Fragment>
+                Press <span className="everyone">All players have joined</span> to start the game!
+              </h3>
+
+          </div>
+          <h3>
+            Players: <br />
+            {players.map((player, i) =>
+            <span key ={player}>
+              <span className= "playerText">{player}</span>
+            <img alt="" src = {images[i]} className="playerImage"/>
+            <br />
+          </span>)}
+        </h3>
+        </React.Fragment>
           }
           {stage === 'picking' &&
           <h1>
