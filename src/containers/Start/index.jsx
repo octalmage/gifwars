@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid, Row, Col} from 'react-bootstrap';
+import {Container as Grid, Row, Col} from 'reactstrap';
 import Game from '../../services/Game';
 
 class Start extends React.PureComponent {

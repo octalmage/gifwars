@@ -20,6 +20,12 @@ body {
   animation: Gradient 15s infinite;
 }
 
+.title {
+  text-align: center;
+  font-weight: 100;
+  font-size: 48px;
+}
+
 @-webkit-keyframes Gradient {
 0% {
   background-position: 0% 50%

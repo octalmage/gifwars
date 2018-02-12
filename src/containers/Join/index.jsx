@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid, Row, Col, Form, FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap';
+import {Container as Grid, Row, Col, Form, FormGroup, Label, Input, Button} from 'reactstrap';
 import Game from '../../services/Game';
 import firebase from '../../services/Firebase';
 
@@ -69,34 +69,31 @@ class Join extends React.PureComponent {
         </Row>
         <Row>
           <Col xs={12} md={12}>
-            <Form horizontal>
-              <FormGroup
-                controlId="formBasicText"
-                validationState={this.getValidationState()}
-              >
-                <Col componentClass={ControlLabel} sm={2}>
-                  Game Code
-                </Col>
-                <Col sm={10}>
-                  <FormControl
+            <Form>
+                  <FormGroup>
+                  <Label for="name">Name</Label>
+                  <Input
                     type="text"
                     value={this.state.name}
                     placeholder="Enter Name"
                     onChange={this.handleChange}
                     name="name"
+                    id="name"
                   />
-                  <FormControl
+                </FormGroup>
+                 <FormGroup>
+                  <Label for="name">Roomcode</Label>
+                  <Input
                     type="text"
                     value={this.state.roomcode}
                     placeholder="Enter Code"
                     onChange={this.handleChange}
                     name="roomcode"
+                    id="roomcode"
                   />
-                  <FormControl.Feedback />
-                </Col>
-              </FormGroup>
+                </FormGroup>
               <FormGroup className="center">
-                <Button bsStyle="primary" disabled={ this.state.valid !== 'success'} onClick={this.joinGame}>Submit</Button>
+                <Button color="primary" disabled={ this.state.valid !== 'success'} onClick={this.joinGame}>Submit</Button>
               </FormGroup>
             </Form>
           </Col>

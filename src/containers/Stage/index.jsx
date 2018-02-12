@@ -1,15 +1,7 @@
 import React from 'react';
-import {Grid, Row, Col} from 'react-bootstrap';
+import {Container as Grid, Row, Col} from 'reactstrap';
 import ConnectFirebase from '../../components/ConnectFirebase';
 import MoveDisplay from '../../components/MoveDisplay';
-import avatar8 from '../../images/dino_thumb.png';
-import avatar1 from '../../images/crabby_thumb.png'
-import avatar2 from '../../images/cat_thumb.png'
-import avatar3 from '../../images/caterpillar_thumb.png'
-import avatar4 from '../../images/doggo_thumb.png'
-import avatar5 from '../../images/birb_thumb.png'
-import avatar6 from '../../images/giraffe_thumb.png'
-import avatar7 from '../../images/koaler_thumb.png'
 import './stage.css';
 
 
@@ -79,14 +71,13 @@ class Stage extends React.PureComponent {
     const { stage, voting_stage, timer, players, round } = game;
     const { id: roomcode } = match.params;
 
-    const images = [avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8];
     return (
       <Grid fluid={true}>
         <Row>
           <Col xs={12} md={12}>
             <h1 className="title">Gif Wars</h1>
             {stage === 'waiting' &&
-<React.Fragment>
+            <React.Fragment>
             <div className="waiting">
               <h2>
                 <span className="textBackground">

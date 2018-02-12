@@ -1,6 +1,6 @@
 import React from 'react';
 import firebase from '../../services/Firebase';
-import {Row, Col, Button} from 'react-bootstrap';
+import {Row, Col, Button} from 'reactstrap';
 
 import './GifVote.css';
 
@@ -91,8 +91,8 @@ class GifVote extends React.Component {
               }
             )}
             <Col xs={12} md={4} className="center vote-button">
-              <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.submit}>Vote</Button>
-              <Button bsSize="large" bsStyle="primary" disabled={this.state.submitted} onClick={this.randomWinner}>Make my mind for me</Button>
+              <Button size="lg" color="primary" disabled={this.state.submitted} onClick={this.submit}>Vote</Button>
+              <Button size="lg" color="primary" disabled={this.state.submitted} onClick={this.randomWinner}>Make my mind for me</Button>
             </Col>
           </Row>
         </React.Fragment>

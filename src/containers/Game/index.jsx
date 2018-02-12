@@ -1,9 +1,9 @@
 import React from 'react';
-import {Grid, Row} from 'react-bootstrap';
+import {Container as Grid, Row} from 'reactstrap';
 import GifSearch from '../../components/GifSearch';
 import ConnectFirebase from '../../components/ConnectFirebase';
 import { withRouter } from 'react-router';
-import { Button } from 'react-bootstrap';
+import { Button } from 'reactstrap';
 import firebase from '../../services/Firebase';
 import GameAPI from '../../services/Game';
 import GifVote from '../../components/GifVote';
@@ -82,8 +82,8 @@ class Game extends React.PureComponent {
               onClick={() => {
                 new GameAPI().startGame(this.props.match.params.id)
               }}
-              bsStyle="primary"
-              bsSize="large">
+              color="primary"
+              size="lg">
               All players have joined
             </Button>
           </React.Fragment>

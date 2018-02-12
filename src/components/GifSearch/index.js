@@ -1,6 +1,6 @@
 import React from 'react';
 import './GifSearch.css';
-import {Row, Col, Button, FormControl} from 'react-bootstrap';
+import {Row, Col, Button, Input} from 'reactstrap';
 
 import GifBox from '../GifBox';
 import firebase from '../../services/Firebase';
@@ -101,7 +101,7 @@ class GifSearch extends React.Component {
   render() {
     return (
       <Row>
-        <Col md={12} xs={12} className="center">
+        <Col md={12} sm={12} className="center">
           <h2>{ this.props.countdown } seconds remaining</h2>
         </Col>
         <Col md={7} xs={12} className="gif-search-box">
@@ -111,15 +111,15 @@ class GifSearch extends React.Component {
           }
         </Row>
           <Row>
-            <FormControl
+            <Input
               type="text"
               value={this.state.search}
               onChange={this.updateSearch}
             />
             <Button
               className="gif-search-buttons"
-              bsStyle="info"
-              bsSize="small"
+              color="info"
+              size="sm"
               onClick={this.search}
             >
               Search
@@ -143,13 +143,13 @@ class GifSearch extends React.Component {
         </Col>
         <Col xs={12} md={5}>
           <Row className="center">
-            <Button className="gif-search-buttons" bsStyle="primary" bsSize="large" onClick={this.submit}>Submit</Button>
+            <Button className="gif-search-buttons" color="primary" size="lg" onClick={this.submit}>Submit</Button>
           </Row>
           <Row className="center">
-            <Button className="gif-search-buttons" bsStyle="info" bsSize="large" onClick={this.shuffle}>Shuffle</Button>
+            <Button className="gif-search-buttons" color="info" size="lg" onClick={this.shuffle}>Shuffle</Button>
           </Row>
           <Row className="center">
-            <Button className="gif-search-buttons" disabled={this.state.luckyLoading} bsStyle="info" bsSize="large" onClick={this.lucky}>I'm feeling lucky</Button>
+            <Button className="gif-search-buttons" disabled={this.state.luckyLoading} color="info" size="lg" onClick={this.lucky}>I'm feeling lucky</Button>
           </Row>
         </Col>
       </Row>
