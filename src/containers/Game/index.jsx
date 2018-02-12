@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container as Grid, Row} from 'reactstrap';
+import {Container as Grid} from 'reactstrap';
 import GifSearch from '../../components/GifSearch';
 import ConnectFirebase from '../../components/ConnectFirebase';
 import { withRouter } from 'react-router';
