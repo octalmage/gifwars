@@ -45,32 +45,32 @@ class Game extends React.PureComponent {
     const { stage, voting_stage, round, pair_id, timer } = game;
     const roomcode = this.props.match.params.id;
     return (
-      <Grid>
+      <Grid fluid>
         {stage === 'picking' &&
           <React.Fragment>
-            <Row className="center">
+            <div className="center">
               <h1> {this.state.user.name + ' in ' + roomcode + ' on Round ' + round } </h1>
-            </Row>
-            <Row>
+            </div>
+            <div>
               {myMove && <GifSearch user={this.state.user} move={myMove} countdown={timer} />}
-            </Row>
+            </div>
           </React.Fragment>
         }
         {stage === 'voting' && voting_stage === 'voting' &&
           <React.Fragment>
-            <Row className="center">
+            <div className="center">
               <h1> {'Voting in ' + roomcode + ' on Round ' + round } </h1>
-            </Row>
-            <Row>
+            </div>
+            <div>
               <GifVote user={this.state.user} pair={pair_id} moves={moves} countdown={timer} />
-            </Row>
+            </div>
           </React.Fragment>
         }
         {stage === 'voting' && voting_stage === 'score' &&
           <React.Fragment>
-            <Row>
+            <div>
               <h1>Results are being tallied up on the main stage!</h1>
-            </Row>
+            </div>
           </React.Fragment>
         }
         {stage === 'waiting' &&
@@ -90,18 +90,21 @@ class Game extends React.PureComponent {
         }
         {stage === 'score' && myMove &&
           <React.Fragment>
-            <Row className="center">
+            <div className="center">
               <h1> {'Score for ' + this.state.user.name + ' in Room '+ roomcode + ' on Round ' + round } </h1>
-            </Row>
-            <Row>
+            </div>
+            <div>
               {myMove.gif &&
                 <div className="big-gif"><img alt="" src={myMove.gif.og_src} /></div>
               }
-            </Row>
-            <Row className="center">
-              <h1>Round {round}: {myMove.vote ? Object.values(myMove.vote).length : 0} </h1>
-              <h1>Total: {this.calcUserTotal(allMoves)}</h1>
-            </Row>
+            </div>
+            <div className="center">
+              <h1>
+                Round {round}: {myMove.vote ? Object.values(myMove.vote).length : 0}
+                <br />
+                Total: {this.calcUserTotal(allMoves)}
+              </h1>
+            </div>
           </React.Fragment>
         }
       </Grid>

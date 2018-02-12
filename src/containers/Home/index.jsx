@@ -11,7 +11,7 @@ const Home = () => (
     <Row>
       <Col xs={12} md={12} className="center">
         <Link to="/start">
-        <Button size="lg" outline>Start a game</Button>
+        <Button size="lg">Start a game</Button>
       </Link>
     </Col>
     </Row>

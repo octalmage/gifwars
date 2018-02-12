@@ -105,12 +105,12 @@ class GifSearch extends React.Component {
           <h2>{ this.props.countdown } seconds remaining</h2>
         </Col>
         <Col md={7} xs={12} className="gif-search-box">
-        <Row className="center">
+        <div className="center">
           {this.props.move &&
             <h2>Prompt: "{this.props.move.prompt}"</h2>
           }
-        </Row>
-          <Row>
+        </div>
+          <div>
             <Input
               type="text"
               value={this.state.search}
@@ -124,33 +124,29 @@ class GifSearch extends React.Component {
             >
               Search
             </Button>
-          </Row>
-          <Row>
+          </div>
+          <div>
             <div className="big-gif"><img alt="" src={this.state.gif.og_src} /></div>
-          </Row>
+          </div>
           <Row>
             {this.gifs.map(
               (gif, key) => {
                 let setGifBig = this.setGif.bind(this, gif, key)
                 return (
-                  <div onClick={setGifBig} key={gif.gif}>
-                    <GifBox active={this.state.gif.gif === gif.gif} gif={gif} />
-                  </div>
+                  <GifBox active={this.state.gif.gif === gif.gif} gif={gif} onClick={setGifBig} key={gif.gif} />
                 );
               }
             )}
           </Row>
         </Col>
         <Col xs={12} md={5}>
-          <Row className="center">
+          <div className="center">
             <Button className="gif-search-buttons" color="primary" size="lg" onClick={this.submit}>Submit</Button>
-          </Row>
-          <Row className="center">
+            <br />
             <Button className="gif-search-buttons" color="info" size="lg" onClick={this.shuffle}>Shuffle</Button>
-          </Row>
-          <Row className="center">
+            <br />
             <Button className="gif-search-buttons" disabled={this.state.luckyLoading} color="info" size="lg" onClick={this.lucky}>I'm feeling lucky</Button>
-          </Row>
+          </div>
         </Col>
       </Row>
     );
